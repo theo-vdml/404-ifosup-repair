@@ -140,7 +140,7 @@
             <div class="flex justify-end gap-2">
 
                 <x-button color="secondary" variant="soft" label="Non, annuler" icon="heroicon-o-x-mark"
-                    x-on:click="$dispatch('close')" />
+                    x-on:click.prevent="$dispatch('close')" />
 
                 <x-button type="submit" color="danger" variant="soft" label="Oui, supprimer" icon="heroicon-o-trash" />
             </div>
