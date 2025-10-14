@@ -22,13 +22,13 @@
         <x-dashboard.sidebar />
 
         <!-- Main content -->
-        <div class="flex flex-col flex-1">
+        <div class="flex flex-col flex-1 min-w-0">
             <!-- Header -->
             <x-dashboard.header />
 
             <!-- Page Content -->
-            <main class="flex-1 p-8 overflow-y-auto bg-gradient-to-br from-slate-50 to-white">
-                <div class="mx-auto max-w-7xl">
+            <main class="flex-1 min-w-0 p-8 overflow-auto bg-gradient-to-br from-slate-50 to-white">
+                <div class="min-w-0 mx-auto max-w-7xl">
                     {{ $slot }}
                 </div>
             </main>
