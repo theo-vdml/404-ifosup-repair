@@ -10,9 +10,62 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $customers = Customer::paginate(10);
+        $query = Customer::query();
+
+        // General search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereRaw("CONCAT(first_name, ' ', last_name, ' ', email, ' ', COALESCE(phone, ''), ' ', COALESCE(address, ''), ' ', COALESCE(notes, '')) LIKE ?", ["%{$search}%"]);
+        }
+
+        // Advanced filters - only apply if advanced search button was pressed
+        if ($request->has('advanced_search')) {
+            if ($request->filled('name')) {
+                $name = $request->name;
+                $query->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$name}%"]);
+            }
+
+            if ($request->filled('email')) {
+                $query->where('email', 'like', "%{$request->email}%");
+            }
+
+            if ($request->filled('phone')) {
+                $query->where('phone', 'like', "%{$request->phone}%");
+            }
+
+            if ($request->filled('address')) {
+                $query->where('address', 'like', "%{$request->address}%");
+            }
+        }
+
+        // Order by
+        $orderBy = $request->get('order_by', 'created_at_desc');
+        switch ($orderBy) {
+            case 'created_at_desc':
+                $query->orderBy('created_at', 'desc');
+                break;
+            case 'created_at_asc':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'full_name_asc':
+                $query->orderBy('first_name')->orderBy('last_name');
+                break;
+            case 'full_name_desc':
+                $query->orderBy('first_name', 'desc')->orderBy('last_name', 'desc');
+                break;
+            case 'email_asc':
+                $query->orderBy('email');
+                break;
+            case 'email_desc':
+                $query->orderBy('email', 'desc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+
+        $customers = $query->paginate(10)->withQueryString();
 
         return view('dashboard.customers.index', compact('customers'));
     }
