@@ -24,6 +24,8 @@
         ],
         'created_at' => [
             'label' => 'Créé le',
+            'mobile' => false,
+            'format' => fn($value) => \Carbon\Carbon::parse($value)->format('d/m/Y'),
             'icon' => 'heroicon-o-calendar',
         ],
     ]" :rows="$customers" />

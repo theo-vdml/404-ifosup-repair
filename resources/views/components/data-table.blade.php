@@ -10,7 +10,8 @@
         <thead class="border-b border-gray-100 bg-gray-50">
             <tr>
                 @foreach ($columns as $key => $col)
-                    <th class="px-6 py-4 text-sm font-semibold text-gray-800 whitespace-nowrap">
+                    <th
+                        class="px-6 py-4 text-sm font-semibold text-gray-800 whitespace-nowrap {{ $col['mobile'] ?? true ? '' : 'hidden md:table-cell' }}">
                         <div class="flex items-center gap-2">
                             @if ($col['icon'] ?? false)
                                 {{ svg($col['icon'], 'w-4 h-4 inline-block mr-2') }}
@@ -32,14 +33,23 @@
                 <tr
                     class="transition-colors duration-150 border-b group border-gray-50 last:border-b-0 hover:bg-gray-50/50">
                     @foreach ($columns as $key => $col)
-                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
+                        <td
+                            class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap {{ $col['mobile'] ?? true ? '' : 'hidden md:table-cell' }}">
+
+                            @php
+                                $value = is_array($row) ? $row[$key] ?? '' : $row->$key ?? '';
+                                if (isset($col['format']) && is_callable($col['format'])) {
+                                    $value = $col['format']($value, $row);
+                                }
+                            @endphp
+
                             @if (isset($col['href']) && $col['href'])
                                 <a href="{{ is_callable($col['href']) ? $col['href']($row) : $col['href'] }}"
                                     class="hover:underline">
-                                    {{ is_array($row) ? $row[$key] ?? '' : $row->$key ?? '' }}
+                                    {{ $value }}
                                 </a>
                             @else
-                                {{ is_array($row) ? $row[$key] ?? '' : $row->$key ?? '' }}
+                                {{ $value }}
                             @endif
                         </td>
                     @endforeach
