@@ -4,6 +4,24 @@
     'actions' => [],
 ])
 
+@php
+    /**
+     * Helper: get a nested value using dot notation from an array or object
+     */
+    $getValue = function ($item, $path) {
+        foreach (explode('.', $path) as $segment) {
+            if (is_array($item) && array_key_exists($segment, $item)) {
+                $item = $item[$segment];
+            } elseif (is_object($item) && isset($item->$segment)) {
+                $item = $item->$segment;
+            } else {
+                return null;
+            }
+        }
+        return $item;
+    };
+@endphp
+
 <div class="overflow-x-auto bg-white border rounded-lg border-gray-200/60">
     <table class="min-w-[700px] w-full table-auto">
         <!-- Header -->
@@ -37,7 +55,8 @@
                             class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap {{ $col['mobile'] ?? true ? '' : 'hidden md:table-cell' }}">
 
                             @php
-                                $value = is_array($row) ? $row[$key] ?? '' : $row->$key ?? '';
+                                $value = $getValue($row, $key);
+
                                 if (isset($col['format']) && is_callable($col['format'])) {
                                     $value = $col['format']($value, $row);
                                 }

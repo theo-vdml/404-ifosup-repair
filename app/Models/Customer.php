@@ -18,6 +18,8 @@ class Customer extends Model
         'notes'
     ];
 
+    protected $appends = ['full_name'];
+
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
