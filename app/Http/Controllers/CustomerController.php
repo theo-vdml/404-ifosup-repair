@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
@@ -12,63 +13,32 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Customer::query();
-
-        // General search
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->whereRaw("CONCAT(first_name, ' ', last_name, ' ', email, ' ', COALESCE(phone, ''), ' ', COALESCE(address, ''), ' ', COALESCE(notes, '')) LIKE ?", ["%{$search}%"]);
-        }
-
-        // Advanced filters - only apply if advanced search button was pressed
-        if ($request->has('advanced_search')) {
-            if ($request->filled('name')) {
-                $name = $request->name;
-                $query->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$name}%"]);
-            }
-
-            if ($request->filled('email')) {
-                $query->where('email', 'like', "%{$request->email}%");
-            }
-
-            if ($request->filled('phone')) {
-                $query->where('phone', 'like', "%{$request->phone}%");
-            }
-
-            if ($request->filled('address')) {
-                $query->where('address', 'like', "%{$request->address}%");
-            }
-        }
+        $query = Customer::query()
+            ->select('customers.*')
+            ->addSelect(DB::raw("CONCAT(customers.first_name, ' ', customers.last_name) as full_name"));
 
         // Order by
-        $orderBy = $request->get('order_by', 'created_at_desc');
-        switch ($orderBy) {
-            case 'created_at_desc':
-                $query->orderBy('created_at', 'desc');
-                break;
-            case 'created_at_asc':
-                $query->orderBy('created_at', 'asc');
-                break;
-            case 'full_name_asc':
-                $query->orderBy('first_name')->orderBy('last_name');
-                break;
-            case 'full_name_desc':
-                $query->orderBy('first_name', 'desc')->orderBy('last_name', 'desc');
-                break;
-            case 'email_asc':
-                $query->orderBy('email');
-                break;
-            case 'email_desc':
-                $query->orderBy('email', 'desc');
-                break;
-            default:
-                $query->orderBy('created_at', 'desc');
+        $orderBy = $request->get('sort', 'created_at');
+        $orderDirection = $request->get('direction', 'desc');
+
+        $allowedSorts = ['id', 'full_name', 'email', 'created_at'];
+        $allowedDirections = ['asc', 'desc'];
+
+        $orderBy = in_array($orderBy, $allowedSorts) ? $orderBy : 'created_at';
+        $orderDirection = in_array($orderDirection, $allowedDirections) ? $orderDirection : 'desc';
+
+        if ($orderBy === 'full_name') {
+            $query->orderBy(DB::raw("CONCAT(customers.first_name, ' ', customers.last_name)"), $orderDirection);
+        } else {
+            $query->orderBy($orderBy, $orderDirection);
         }
 
+        // Pagination
         $customers = $query->paginate(10)->withQueryString();
 
         return view('dashboard.customers.index', compact('customers'));
     }
+
 
     /**
      * Show the form for creating a new resource.

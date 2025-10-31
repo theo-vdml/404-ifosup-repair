@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TicketController extends Controller
 {
@@ -12,7 +13,26 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::all();
+        $orderBy = request()->get('sort', 'created_at');
+        $orderDirection = request()->get('direction', 'desc');
+        $allowedSorts = ['id', 'title', 'status', 'created_at', 'customer_full_name'];
+        $allowedDirections = ['asc', 'desc'];
+        $orderBy = in_array($orderBy, $allowedSorts) ? $orderBy : 'created_at';
+        $orderDirection = in_array($orderDirection, $allowedDirections) ? $orderDirection : 'desc';
+
+        $tickets = Ticket::query()
+            ->select('tickets.*')
+            ->join('customers', 'tickets.customer_id', '=', 'customers.id')
+            ->addSelect(DB::raw("CONCAT(customers.first_name, ' ', customers.last_name) as customer_full_name"));
+
+        if ($orderBy === 'customer_full_name') {
+            $tickets->orderBy(DB::raw("customer_full_name"), $orderDirection);
+        } else {
+            $tickets->orderBy($orderBy, $orderDirection);
+        }
+
+        $tickets = $tickets->paginate(10)->withQueryString();
+
         return view('dashboard.tickets.index', compact('tickets'));
     }
 

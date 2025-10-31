@@ -10,7 +10,6 @@
         'status' => [
             'label' => 'Status',
             'slot' => 'dashboard.tickets.partials.status-cell',
-            'sortable' => true,
         ],
         'title' => [
             'label' => 'Intitulé',
@@ -24,7 +23,7 @@
             'key' => 'customer.full_name',
             'href' => fn($row) => route('customers.show', $row->customer),
             'icon' => 'heroicon-o-user',
-            'sortable' => true,
+            'sortable' => 'customer_full_name',
         ],
         'date' => [
             'label' => 'Ouvert le',

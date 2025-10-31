@@ -2,6 +2,7 @@
     'columns' => [],
     'rows' => [],
     'options' => [],
+    'searchable' => false,
 ])
 
 @php
