@@ -23,7 +23,7 @@
             'key' => 'customer.full_name',
             'href' => fn($row) => route('customers.show', $row->customer),
             'icon' => 'heroicon-o-user',
-            'sortable' => 'customer_full_name',
+            'sortable' => true,
         ],
         'date' => [
             'label' => 'Ouvert le',

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
@@ -13,28 +12,7 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Customer::query()
-            ->select('customers.*')
-            ->addSelect(DB::raw("CONCAT(customers.first_name, ' ', customers.last_name) as full_name"));
-
-        // Order by
-        $orderBy = $request->get('sort', 'created_at');
-        $orderDirection = $request->get('direction', 'desc');
-
-        $allowedSorts = ['id', 'full_name', 'email', 'created_at'];
-        $allowedDirections = ['asc', 'desc'];
-
-        $orderBy = in_array($orderBy, $allowedSorts) ? $orderBy : 'created_at';
-        $orderDirection = in_array($orderDirection, $allowedDirections) ? $orderDirection : 'desc';
-
-        if ($orderBy === 'full_name') {
-            $query->orderBy(DB::raw("CONCAT(customers.first_name, ' ', customers.last_name)"), $orderDirection);
-        } else {
-            $query->orderBy($orderBy, $orderDirection);
-        }
-
-        // Pagination
-        $customers = $query->paginate(10)->withQueryString();
+        $customers = Customer::sorted('created_at', 'desc')->paginate(10)->withQueryString();
 
         return view('dashboard.customers.index', compact('customers'));
     }

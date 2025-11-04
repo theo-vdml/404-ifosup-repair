@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
     use HasFactory;
+    use Sortable;
 
     protected $fillable = [
         'first_name',
@@ -16,6 +18,10 @@ class Customer extends Model
         'phone',
         'address',
         'notes'
+    ];
+
+    protected $multiColumnSorts = [
+        'full_name' => ['first_name', 'last_name'],
     ];
 
     protected $appends = ['full_name'];

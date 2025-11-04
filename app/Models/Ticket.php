@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Enums\TimelineEventType;
+use App\Models\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
 {
     use HasFactory;
+    use Sortable;
 
     protected $fillable = [
         'title',
@@ -16,6 +18,10 @@ class Ticket extends Model
         'customer_id',
         'status_id',
         'priority_id',
+    ];
+
+    protected $multiColumnSorts = [
+        'customer.full_name' => ['customer.first_name', 'customer.last_name'],
     ];
 
     /**

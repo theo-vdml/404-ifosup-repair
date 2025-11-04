@@ -45,24 +45,6 @@
         };
     };
 
-    $currentSort = request()->get('sort', null);
-    $currentDirection = request()->get('direction', null);
-
-    $nextSortState = function ($key) use ($currentSort, $currentDirection) {
-        if ($currentSort !== $key) {
-            // 1️⃣ Démarre sur asc
-            return ['sort' => $key, 'direction' => 'asc'];
-        }
-
-        if ($currentDirection === 'asc') {
-            // 2️⃣ Passe à desc
-            return ['sort' => $key, 'direction' => 'desc'];
-        }
-
-        // 3️⃣ Supprime le tri complètement
-        return ['sort' => null, 'direction' => null];
-    };
-
     $headerCellBaseClass = 'px-6 py-4 text-sm font-semibold text-gray-800 whitespace-nowrap border border-gray-200/60';
     $dataRowBaseClass =
         'transition-colors duration-150 border-b group border-gray-50 last:border-b-0 hover:bg-gray-50/50';
@@ -80,28 +62,17 @@
                         $icon = data_get($colOptions, 'icon', null);
 
                         $sortable = data_get($colOptions, 'sortable', false);
-                        $sortKey = is_string($sortable)
-                            ? $sortable
-                            : ($sortable === true
-                                ? data_get($colOptions, 'key', $id)
-                                : null);
-
-                        $isSortable = !blank($sortKey);
-                        $isSorted = $isSortable && $currentSort === $sortKey;
-                        $nextSort = $isSortable ? $nextSortState($sortKey) : null;
-
-                        $sortableUrl = $isSortable
-                            ? request()->fullUrlWithQuery([
-                                'sort' => $nextSort['sort'],
-                                'direction' => $nextSort['direction'],
-                            ])
+                        $sortableKey = $sortable
+                            ? (is_string($sortable)
+                                ? $sortable
+                                : data_get($colOptions, 'key', $id))
                             : null;
 
-                        $sortIcon = $isSorted
-                            ? ($currentDirection === 'asc'
-                                ? 'heroicon-s-chevron-up'
-                                : 'heroicon-s-chevron-down')
-                            : 'heroicon-s-arrows-up-down';
+                        $sortIcon = match ($sortableKey ? sortState($sortableKey) : null) {
+                            'asc' => 'heroicon-s-chevron-up',
+                            'desc' => 'heroicon-s-chevron-down',
+                            default => 'heroicon-s-arrows-up-down',
+                        };
 
                         // Get header classes
                         $headerClasses = collect([
@@ -115,7 +86,7 @@
                     @endphp
 
                     <th class="{{ $headerClasses }}"
-                        @if ($isSortable) role="button" onclick="window.location = '{{ $sortableUrl }}'" @endif>
+                        @if ($sortable) role="button" onclick="window.location = '{{ sortableUrl($sortableKey) }}'" @endif>
                         <div class="flex items-center gap-2">
                             {{-- Label + Icon --}}
                             @if ($icon)
@@ -126,7 +97,7 @@
                                 {{ data_get($colOptions, 'label', $id) }}
                             </span>
 
-                            @if ($isSortable)
+                            @if ($sortable)
                                 {{-- Icône de tri --}}
                                 <span
                                     class="flex items-center justify-center w-3 h-3 text-gray-600 group-hover:text-gray-900">
