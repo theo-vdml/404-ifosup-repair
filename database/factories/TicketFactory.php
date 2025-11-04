@@ -20,7 +20,8 @@ class TicketFactory extends Factory
             'customer_id' => \App\Models\Customer::factory(),
             'title' => $this->faker->sentence(),
             'description' => $this->faker->paragraph(),
-            'closed_at' => $this->faker->optional(0.3)->dateTimeBetween('-1 month', 'now'),
+            'status_id' => \App\Models\TicketStatus::inRandomOrder()->first()->id,
+            'priority_id' => \App\Models\TicketPriority::inRandomOrder()->first()->id,
         ];
     }
 }
