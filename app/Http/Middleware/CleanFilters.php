@@ -15,8 +15,6 @@ class CleanFilters
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $originalQueryString = $request->getQueryString();
-
         $filters = $request->input('filter', []);
 
         if (!empty($filters)) {

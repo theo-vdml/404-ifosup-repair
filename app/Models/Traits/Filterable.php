@@ -19,7 +19,7 @@ trait Filterable
     /**
      * Mapping of named operators to SQL operators.
      */
-    protected array $operatorMap = [
+    private array $operatorMap = [
         'eq' => '=',
         'neq' => '!=',
         'gt' => '>',
@@ -122,6 +122,7 @@ trait Filterable
         $base = $this;
         $currentQuery = $query;
         $joinedPath = [];
+        $alias = $base->getTable(); // Initialize alias to base table name
 
         while (count($parts) > 1) {
             $relation = array_shift($parts);

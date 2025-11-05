@@ -28,7 +28,7 @@
 <div class="{{ $colSpan }} space-y-2">
     @if ($label)
         <label for="{{ $name }}" class="block text-sm font-semibold text-gray-700">
-            {!! $label !!}
+            {{ $label }}
         </label>
     @endif
 

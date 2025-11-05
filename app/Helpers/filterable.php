@@ -6,11 +6,22 @@ if (!function_exists('filterUrl')) {
         $currentFilters = request()->get('filter', []);
         $mergedFilters = array_merge_recursive($currentFilters, $newFilters);
 
-        // Remove empty values
-        $mergedFilters = array_filter($mergedFilters, function($operators) {
+        // Remove empty values recursively
+        $mergedFilters = array_filter($mergedFilters, function ($operators) {
             if (!is_array($operators)) return false;
-            return array_filter($operators, fn($value) => !empty($value));
+            $filtered = array_filter($operators, fn($value) => !empty($value));
+            return !empty($filtered);
         });
+
+        // Clean nested arrays
+        foreach ($mergedFilters as $key => $operators) {
+            $filtered = array_filter($operators, fn($value) => !empty($value));
+            if (!empty($filtered)) {
+                $mergedFilters[$key] = $filtered;
+            } else {
+                unset($mergedFilters[$key]);
+            }
+        }
 
         $query = request()->except(['filter']);
 

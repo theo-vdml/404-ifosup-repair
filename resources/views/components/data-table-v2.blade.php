@@ -92,7 +92,7 @@
                             @endforeach
 
                             @foreach ($filters as $filter)
-                                @if (key_exists('key', $filter))
+                                @if (array_key_exists('key', $filter))
                                     @php
                                         $key = $filter['key'];
                                         $operator = $filter['operator'] ?? 'eq';
