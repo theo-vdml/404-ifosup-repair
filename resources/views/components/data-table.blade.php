@@ -7,6 +7,17 @@
 ])
 
 @php
+    $isEmpty = $rows->count() === 0;
+
+    $defaultOptions = [
+        'empty_icon' => 'heroicon-o-document-text',
+        'empty_title' => 'Aucune donnée disponible',
+        'empty_description' => 'Les données apparaîtront ici une fois ajoutées.',
+        'hide_headers_on_empty' => false,
+    ];
+
+    $options = array_merge($defaultOptions, $options);
+
     $renderDynamicSlot = function ($slot, array $data = []) {
         if (blank($slot)) {
             return null;
@@ -133,62 +144,64 @@
 
 <div class="overflow-x-auto bg-white border rounded-lg border-gray-200/60">
     <table class="min-w-[700px] w-full table-auto">
-        <!-- Header -->
-        <thead class="border-b border-gray-100 bg-gray-50">
-            <tr>
-                @foreach ($columns as $id => $colOptions)
-                    @php
-                        // Icon for header if provided
-                        $icon = data_get($colOptions, 'icon', null);
+        @if (!$isEmpty || !$options['hide_headers_on_empty'])
+            <!-- Header -->
+            <thead class="border-b border-gray-100 bg-gray-50">
+                <tr>
+                    @foreach ($columns as $id => $colOptions)
+                        @php
+                            // Icon for header if provided
+                            $icon = data_get($colOptions, 'icon', null);
 
-                        $sortable = data_get($colOptions, 'sortable', false);
-                        $sortableKey = $sortable
-                            ? (is_string($sortable)
-                                ? $sortable
-                                : data_get($colOptions, 'key', $id))
-                            : null;
+                            $sortable = data_get($colOptions, 'sortable', false);
+                            $sortableKey = $sortable
+                                ? (is_string($sortable)
+                                    ? $sortable
+                                    : data_get($colOptions, 'key', $id))
+                                : null;
 
-                        $sortIcon = match ($sortableKey ? sortState($sortableKey) : null) {
-                            'asc' => 'heroicon-s-chevron-up',
-                            'desc' => 'heroicon-s-chevron-down',
-                            default => 'heroicon-s-arrows-up-down',
-                        };
+                            $sortIcon = match ($sortableKey ? sortState($sortableKey) : null) {
+                                'asc' => 'heroicon-s-chevron-up',
+                                'desc' => 'heroicon-s-chevron-down',
+                                default => 'heroicon-s-arrows-up-down',
+                            };
 
-                        // Get header classes
-                        $headerClasses = collect([
-                            $headerCellBaseClass,
-                            data_get($colOptions, 'align', 'text-left'),
-                            $getBreakpointClass(data_get($colOptions, 'breakpoint', null)),
-                            data_get($colOptions, 'ui.header', ''),
-                        ])
-                            ->filter()
-                            ->join(' ');
-                    @endphp
+                            // Get header classes
+                            $headerClasses = collect([
+                                $headerCellBaseClass,
+                                data_get($colOptions, 'align', 'text-left'),
+                                $getBreakpointClass(data_get($colOptions, 'breakpoint', null)),
+                                data_get($colOptions, 'ui.header', ''),
+                            ])
+                                ->filter()
+                                ->join(' ');
+                        @endphp
 
-                    <th class="{{ $headerClasses }}"
-                        @if ($sortable) role="button" onclick="window.location = '{{ sortableUrl($sortableKey) }}'" @endif>
-                        <div class="flex items-center gap-2">
-                            {{-- Label + Icon --}}
-                            @if ($icon)
-                                {{ svg($icon, 'w-4 h-4 ' . data_get($colOptions, 'ui.icon', '')) }}
-                            @endif
+                        <th class="{{ $headerClasses }}"
+                            @if ($sortable) role="button" onclick="window.location = '{{ sortableUrl($sortableKey) }}'" @endif>
+                            <div class="flex items-center gap-2">
+                                {{-- Label + Icon --}}
+                                @if ($icon)
+                                    {{ svg($icon, 'w-4 h-4 ' . data_get($colOptions, 'ui.icon', '')) }}
+                                @endif
 
-                            <span class="flex-1 {{ data_get($colOptions, 'ui.label', '') }}">
-                                {{ data_get($colOptions, 'label', $id) }}
-                            </span>
-
-                            @if ($sortable)
-                                {{-- Icône de tri --}}
-                                <span
-                                    class="flex items-center justify-center w-3 h-3 text-gray-600 group-hover:text-gray-900">
-                                    {{ svg($sortIcon, 'w-3 h-3') }}
+                                <span class="flex-1 {{ data_get($colOptions, 'ui.label', '') }}">
+                                    {{ data_get($colOptions, 'label', $id) }}
                                 </span>
-                            @endif
-                        </div>
-                    </th>
-                @endforeach
-            </tr>
-        </thead>
+
+                                @if ($sortable)
+                                    {{-- Icône de tri --}}
+                                    <span
+                                        class="flex items-center justify-center w-3 h-3 text-gray-600 group-hover:text-gray-900">
+                                        {{ svg($sortIcon, 'w-3 h-3') }}
+                                    </span>
+                                @endif
+                            </div>
+                        </th>
+                    @endforeach
+                </tr>
+            </thead>
+        @endif
 
         <!-- Body -->
         <tbody>
@@ -246,16 +259,16 @@
                             <div class="flex flex-col items-center justify-center space-y-4">
                                 <!-- Icon -->
                                 <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center">
-                                    {{ svg(data_get($options, 'empty_icon', 'heroicon-o-document-text'), 'w-8 h-8 text-slate-400') }}
+                                    {{ svg($options['empty_icon'], 'w-8 h-8 text-slate-400') }}
                                 </div>
 
                                 <!-- Text -->
                                 <div class="space-y-1">
                                     <p class="text-base font-semibold text-slate-900">
-                                        {{ data_get($options, 'empty_title', 'Aucune donnée disponible') }}
+                                        {{ $options['empty_title'] }}
                                     </p>
                                     <p class="text-sm text-slate-500">
-                                        {{ data_get($options, 'empty_description', 'Les données apparaîtront ici une fois ajoutées.') }}
+                                        {{ $options['empty_description'] }}
                                     </p>
                                 </div>
                             </div>

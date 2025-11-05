@@ -17,6 +17,7 @@ use App\Http\Controllers\TechnicianController;
 Route::middleware('auth')->group(function () {
     Route::resource('customers', CustomerController::class);
     Route::resource('tickets', TicketController::class);
+    Route::get('my-tickets', [TicketController::class, 'my'])->name('tickets.my');
     Route::resource('technicians', TechnicianController::class);
 
     Route::post('tickets/{ticket}/assign', [TicketController::class, 'assignUser'])->name('tickets.assign');

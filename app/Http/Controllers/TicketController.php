@@ -23,6 +23,22 @@ class TicketController extends Controller
     }
 
     /**
+     * Display tickets assigned to the current user with open status.
+     */
+    public function my()
+    {
+        $tickets = Ticket::with(['customer', 'status', 'priority'])
+            ->whereRelation('users', 'user_id', Auth::id())
+            ->whereHas('status', fn($q) => $q->where('code', 'open'))
+            ->sorted('created_at', 'desc')
+            ->filtered()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('dashboard.tickets.my-tickets', compact('tickets'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
