@@ -28,6 +28,60 @@
             'sortable' => true,
         ],
     ];
+
+    $filters = [
+        [
+            'type' => 'text',
+            'key' => 'first_name',
+            'label' => 'Prénom',
+            'placeholder' => 'Rechercher par prénom',
+            'operator' => 'like',
+            'half' => true,
+        ],
+        [
+            'type' => 'text',
+            'key' => 'last_name',
+            'label' => 'Nom',
+            'placeholder' => 'Rechercher par nom',
+            'operator' => 'like',
+            'half' => true,
+        ],
+        [
+            'type' => 'text',
+            'key' => 'email',
+            'label' => 'Email',
+            'placeholder' => 'Rechercher par email',
+            'operator' => 'like',
+        ],
+        [
+            'type' => 'text',
+            'key' => 'phone',
+            'label' => 'Téléphone',
+            'placeholder' => 'Rechercher par téléphone',
+            'operator' => 'like',
+        ],
+        [
+            'key' => 'address',
+            'label' => 'Adresse',
+            'type' => 'text',
+            'placeholder' => 'Rechercher par adresse',
+            'operator' => 'like',
+        ],
+        [
+            'key' => 'created_at',
+            'label' => 'Date de création (à partir de)',
+            'type' => 'date',
+            'operator' => 'gte',
+            'half' => true,
+        ],
+        [
+            'key' => 'created_at',
+            'label' => 'Date de création (jusqu\'à)',
+            'type' => 'date',
+            'operator' => 'lte',
+            'half' => true,
+        ],
+    ];
 @endphp
 
 <x-dashboard-layout>
@@ -38,6 +92,6 @@
         </x-slot>
     </x-dashboard.page-header>
 
-    <x-data-table-v2 :columns="$columns" :rows="$customers" />
+    <x-data-table-v2 :columns="$columns" :rows="$customers" :filters="$filters" />
 
 </x-dashboard-layout>

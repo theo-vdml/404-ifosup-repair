@@ -6,7 +6,9 @@
     'size' => 'fill', // fill | half
     'name',
     'options' => null, // for select (optional)
-    'value' => null, // default value (optional
+    'value' => null, // default value (optional)
+    'defaultOption' => null, // for select: ['label' => 'All', 'value' => '']
+    'placeholder' => null, // for input placeholder
 ])
 
 @php
@@ -26,17 +28,23 @@
 <div class="{{ $colSpan }} space-y-2">
     @if ($label)
         <label for="{{ $name }}" class="block text-sm font-semibold text-gray-700">
-            {{ $label }}
+            {!! $label !!}
         </label>
     @endif
 
     <div class="relative">
         @if ($type === 'textarea')
             <textarea id="{{ $name }}" name="{{ $name }}" aria-invalid="{{ $hasError ? 'true' : 'false' }}"
-                {{ $attributes->merge(['class' => "{$fieldBase} {$inputSize} {$errorClasses} {$withIconPadding}"]) }}>{{ old($name, $value) }}</textarea>
+                {{ $attributes->merge(['class' => "{$fieldBase} {$inputSize} {$errorClasses} {$withIconPadding}", 'placeholder' => $placeholder]) }}>{{ old($name, $value) }}</textarea>
         @elseif ($type === 'select')
             <select id="{{ $name }}" name="{{ $name }}" aria-invalid="{{ $hasError ? 'true' : 'false' }}"
                 {{ $attributes->merge(['class' => "{$fieldBase} {$inputSize} {$errorClasses} {$withIconPadding}"]) }}>
+                @if ($defaultOption)
+                    <option value="{{ $defaultOption['value'] ?? '' }}"
+                        {{ old($name, $value) == ($defaultOption['value'] ?? '') ? 'selected' : '' }}>
+                        {{ $defaultOption['label'] ?? 'All' }}
+                    </option>
+                @endif
                 @if (is_array($options))
                     @foreach ($options as $val => $labelOption)
                         <option value="{{ $val }}" {{ old($name, $value) == $val ? 'selected' : '' }}>
@@ -47,7 +55,7 @@
         @else
             <input id="{{ $name }}" name="{{ $name }}" type="{{ $type }}"
                 value="{{ old($name, $value) }}" aria-invalid="{{ $hasError ? 'true' : 'false' }}"
-                {{ $attributes->merge(['class' => "{$fieldBase} {$inputSize} {$errorClasses} {$withIconPadding}"]) }} />
+                {{ $attributes->merge(['class' => "{$fieldBase} {$inputSize} {$errorClasses} {$withIconPadding}", 'placeholder' => $placeholder]) }} />
         @endif
 
         @if ($icon)

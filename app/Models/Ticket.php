@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\TimelineEventType;
+use App\Models\Traits\Filterable;
 use App\Models\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class Ticket extends Model
 {
     use HasFactory;
-    use Sortable;
+    use Sortable, Filterable;
 
     protected $fillable = [
         'title',

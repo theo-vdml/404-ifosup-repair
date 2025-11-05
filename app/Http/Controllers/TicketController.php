@@ -17,7 +17,7 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::with(['customer', 'status', 'priority'])->sorted('created_at', 'desc')->paginate(10)->withQueryString();
+        $tickets = Ticket::with(['customer', 'status', 'priority'])->sorted('created_at', 'desc')->filtered()->paginate(10)->withQueryString();
 
         return view('dashboard.tickets.index', compact('tickets'));
     }

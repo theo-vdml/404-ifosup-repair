@@ -1,4 +1,69 @@
 @php
+
+    $filters = [
+        [
+            'key' => 'status.code',
+            'label' => 'Statut',
+            'type' => 'select',
+            'options' => [
+                'open' => 'Ouvert',
+                'closed' => 'Fermé',
+                'pending' => 'En attente',
+            ],
+            'unselectable' => true,
+            'placeholder' => 'Tous',
+        ],
+        [
+            'key' => 'priority.code',
+            'label' => 'Priorité',
+            'type' => 'select',
+            'options' => [
+                'low' => 'Faible',
+                'medium' => 'Moyen',
+                'high' => 'Élevé',
+            ],
+            'unselectable' => true,
+            'placeholder' => 'Toutes',
+        ],
+        [
+            'key' => 'title',
+            'label' => 'Titre',
+            'type' => 'text',
+            'placeholder' => 'Rechercher par titre',
+            'operator' => 'like',
+        ],
+        [
+            'key' => 'created_at',
+            'label' => 'Date de création (à partir de)',
+            'type' => 'date',
+            'operator' => 'gte',
+            'half' => true,
+        ],
+        [
+            'key' => 'created_at',
+            'label' => 'Date de création (jusqu\'à)',
+            'type' => 'date',
+            'operator' => 'lte',
+            'half' => true,
+        ],
+        [
+            'key' => 'customer.first_name',
+            'label' => 'Prénom du client',
+            'type' => 'text',
+            'placeholder' => 'Rechercher par prénom',
+            'operator' => 'like',
+            'half' => true,
+        ],
+        [
+            'key' => 'customer.last_name',
+            'label' => 'Nom du client',
+            'type' => 'text',
+            'placeholder' => 'Rechercher par nom',
+            'operator' => 'like',
+            'half' => true,
+        ],
+    ];
+
     $columns = [
         'id' => [
             'label' => 'ID',
@@ -43,5 +108,5 @@
         </x-slot>
     </x-dashboard.page-header>
 
-    <x-data-table-v2 :columns="$columns" :rows="$tickets" searchable />
+    <x-data-table-v2 :columns="$columns" :rows="$tickets" searchable :filters="$filters" />
 </x-dashboard-layout>

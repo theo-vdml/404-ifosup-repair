@@ -12,7 +12,7 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
-        $customers = Customer::sorted('created_at', 'desc')->paginate(10)->withQueryString();
+        $customers = Customer::sorted('created_at', 'desc')->filtered()->paginate(10)->withQueryString();
 
         return view('dashboard.customers.index', compact('customers'));
     }
