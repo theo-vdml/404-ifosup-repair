@@ -9,9 +9,15 @@
  *
  */
 
-use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\TicketController;
 
 Route::middleware('auth')->group(function () {
     Route::resource('customers', CustomerController::class);
+    Route::resource('tickets', TicketController::class);
+
+    Route::post('tickets/{ticket}/assign', [TicketController::class, 'assignUser'])->name('tickets.assign');
+    Route::delete('tickets/{ticket}/unassign/{user}', [TicketController::class, 'unassignUser'])->name('tickets.unassign');
+    Route::post('tickets/{ticket}/notes', [TicketController::class, 'storeNote'])->name('tickets.notes.store');
 });

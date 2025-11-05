@@ -24,3 +24,6 @@ require __DIR__ . '/auth.php';
 
 // Dashboard routes import
 require __DIR__ . '/dashboard.php';
+
+// Api routes import
+require __DIR__ . '/api.php';

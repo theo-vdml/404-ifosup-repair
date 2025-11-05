@@ -19,8 +19,10 @@ return new class extends Migration
                 ->cascadeOnUpdate();
             $table->string('title'); // Title of the ticket
             $table->text('description'); // Detailed description of the issue
-            $table->dateTime('closed_at') // Timestamp when the ticket was closed
-                ->nullable();
+            $table->foreignId('status_id') // Foreign key to the ticket_statuses table
+                ->constrained('ticket_statuses');
+            $table->foreignId('priority_id') // Foreign key to the ticket_priorities table
+                ->constrained('ticket_priorities');
             $table->timestamps(); // created_at and updated_at timestamps
         });
     }
