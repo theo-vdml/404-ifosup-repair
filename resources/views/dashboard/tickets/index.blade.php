@@ -108,5 +108,5 @@
         </x-slot>
     </x-dashboard.page-header>
 
-    <x-data-table-v2 :columns="$columns" :rows="$tickets" searchable :filters="$filters" />
+    <x-data-table :columns="$columns" :rows="$tickets" searchable :filters="$filters" />
 </x-dashboard-layout>
