@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Traits\Filterable;
+use App\Models\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,6 +13,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    use Sortable, Filterable;
 
     /**
      * The attributes that are mass assignable.
@@ -46,5 +49,10 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => \App\Enums\UserRole::class,
         ];
+    }
+
+    public function tickets()
+    {
+        return $this->belongsToMany(\App\Models\Ticket::class);
     }
 }

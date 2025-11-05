@@ -57,7 +57,7 @@
                      <x-heroicon-o-users class="w-5 h-5" />
                  </x-slot>
              </x-dashboard.nav-link>
-             <x-dashboard.nav-link label="Techniciens" href="#">
+             <x-dashboard.nav-link label="Techniciens" href="{{ route('technicians.index') }}">
                  <x-slot name="icon">
                      <x-heroicon-o-wrench-screwdriver class="w-5 h-5" />
                  </x-slot>

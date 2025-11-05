@@ -12,10 +12,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\TechnicianController;
 
 Route::middleware('auth')->group(function () {
     Route::resource('customers', CustomerController::class);
     Route::resource('tickets', TicketController::class);
+    Route::resource('technicians', TechnicianController::class);
 
     Route::post('tickets/{ticket}/assign', [TicketController::class, 'assignUser'])->name('tickets.assign');
     Route::delete('tickets/{ticket}/unassign/{user}', [TicketController::class, 'unassignUser'])->name('tickets.unassign');
