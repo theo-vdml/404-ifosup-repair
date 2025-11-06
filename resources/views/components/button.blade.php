@@ -10,7 +10,7 @@
 
 @php
     $baseClasses =
-        'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 backdrop-blur-sm';
+        'inline-flex items-center justify-center rounded-lg gap-2 font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 backdrop-blur-sm';
 
     $colors = [
         'primary' => [
@@ -56,7 +56,7 @@
 @endphp
 
 @if ($href)
-    <a href="{{ $disabled ? '#' : $href }}" {{ $attributes->merge(['class' => $classes]) }}>
+    <a href="{{ $disabled ? '#' : $href }}" {{ $attributes->twMerge($classes) }}>
         @if ($icon)
             {{ svg($icon, $buttonSizeClasses[$size] ?? $buttonSizeClasses['base']) }}
         @endif
@@ -65,7 +65,7 @@
         @endif
     </a>
 @else
-    <button {{ $attributes->merge(['class' => $classes]) }} @disabled($disabled)>
+    <button {{ $attributes->twMerge($classes) }} @disabled($disabled)>
         @if ($icon)
             {{ svg($icon, $buttonSizeClasses[$size] ?? $buttonSizeClasses['base']) }}
         @endif

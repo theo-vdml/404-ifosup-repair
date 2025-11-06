@@ -9,6 +9,7 @@ use App\Models\TicketUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class TicketController extends Controller
 {
@@ -138,24 +139,21 @@ class TicketController extends Controller
      */
     public function storeNote(Request $request, Ticket $ticket)
     {
+
         $data = $request->validate([
-            // 'type' => 'required|in:diagnostic,intervention,commentaire',
-            'comment' => 'required|string',
-            'action' => 'required|in:publish,publish_and_close',
+            'message' => 'required|string',
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'file',
         ]);
 
         // Create the note
-        $ticket->notes()->create([
+        $note = $ticket->notes()->create([
             'user_id' => Auth::id(),
-            'message' => $data['comment'],
+            'message' => $data['message'],
         ]);
 
-        // If action is publish_and_close, update ticket status to closed
-        if ($data['action'] === 'publish_and_close') {
-            $closedStatus = TicketStatus::closed();
-            if ($closedStatus) {
-                $ticket->update(['status_id' => $closedStatus->id]);
-            }
+        if ($request->hasFile('attachments')) {
+            $note->attachFiles($request->file('attachments'));
         }
 
         return redirect()->route('tickets.show', $ticket)->with('success', 'Commentaire ajouté avec succès.');

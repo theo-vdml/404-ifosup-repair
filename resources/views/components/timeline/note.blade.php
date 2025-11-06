@@ -9,15 +9,30 @@
     <div class="flex-1">
         <div class="flex items-center gap-2 mb-2">
             <span class="font-semibold text-slate-900">{{ $data->user?->name ?? 'System' }}</span>
-            {{-- <span
-                class="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 rounded text-xs font-medium">
-                <x-heroicon-o-check-circle class="w-3 h-3" />
-                Intervention
-            </span> --}}
             <span class="text-slate-400 text-xs">• {{ $data->created_at->diffForHumans() }}</span>
         </div>
         <div class="text-sm text-slate-700 leading-relaxed">
             {{ $data->message }}
         </div>
+
+        {{-- Attachments --}}
+        @if ($data->attachments->count() > 0)
+            <div class="mt-3 flex flex-wrap gap-1">
+                @foreach ($data->attachments as $attachment)
+                    <a href="{{ route('attachments.download', $attachment->id) }}"
+                        class="inline-flex items-center bg-gray-50 hover:bg-gray-100 rounded-full px-2 py-1 border border-gray-200 text-xs transition-colors"
+                        target="_blank" download="{{ $attachment->file_name }}">
+                        <svg class="w-4 h-4 text-gray-500 mr-1" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+
+                        <span class="text-gray-700 truncate max-w-[100px]">{{ $attachment->file_name }}</span>
+                    </a>
+                @endforeach
+            </div>
+        @endif
     </div>
 </div>
