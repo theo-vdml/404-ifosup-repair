@@ -99,8 +99,10 @@
 <x-dashboard-layout>
     <x-dashboard.page-header title="Tickets" description="Parcourez la liste des tickets ci-dessous.">
         <x-slot name="actions">
+            @can('create', App\Models\Ticket::class)
             <x-button variant="soft" color="primary" label="Ouvrir un ticket" icon="heroicon-o-plus"
                 href="{{ route('tickets.create') }}" />
+            @endcan
         </x-slot>
     </x-dashboard.page-header>
 

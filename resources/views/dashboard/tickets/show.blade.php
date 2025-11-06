@@ -226,6 +226,7 @@
             </div>
             <div class="col-span-1 ">
 
+                @can('assignUser', $ticket)
                 <!-- Assignés Section -->
                 <div class="mb-4 bg-white border rounded-lg border-slate-300/50">
                     <div class="p-5 border-b rounded-t-lg border-slate-200 bg-gradient-to-r from-slate-50 to-white">
@@ -296,6 +297,7 @@
                         </form>
                     </div>
                 </div>
+                @endcan
 
                 <!-- Informations Client Section -->
                 <div class="mb-4 bg-white border rounded-lg border-slate-300/50">
@@ -330,6 +332,7 @@
                     </div>
                 </div>
 
+                @can('updateStatus', $ticket)
                 <!-- Détails du Ticket Section -->
                 <div class="bg-white border rounded-lg border-slate-300/50">
                     <div class="p-5 border-b rounded-t-lg border-slate-200 bg-gradient-to-r from-slate-50 to-white">
@@ -424,6 +427,7 @@
                         </div>
                     </form>
                 </div>
+                @endcan
             </div>
 
         </div>
