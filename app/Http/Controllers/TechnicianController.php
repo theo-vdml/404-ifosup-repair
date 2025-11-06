@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
 class TechnicianController extends Controller
@@ -13,6 +14,8 @@ class TechnicianController extends Controller
      */
     public function index(Request $request)
     {
+        Gate::authorize('viewAny', User::class);
+
         $technicians = User::sorted('created_at', 'desc')->filtered()->paginate(10)->withQueryString();
 
         return view('dashboard.technicians.index', compact('technicians'));
@@ -23,6 +26,8 @@ class TechnicianController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', User::class);
+
         return view('dashboard.technicians.create');
     }
 
@@ -31,6 +36,8 @@ class TechnicianController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create', User::class);
+
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -43,7 +50,7 @@ class TechnicianController extends Controller
 
         User::create($data);
 
-        return redirect()->route('technicians.index')->with('success', 'Technicien supprimé avec succès.');
+        return redirect()->route('technicians.index')->with('success', 'Technicien créé avec succès.');
     }
 
     /**
@@ -51,6 +58,8 @@ class TechnicianController extends Controller
      */
     public function show(User $technician)
     {
+        Gate::authorize('view', $technician);
+
         return view('dashboard.technicians.show', compact('technician'));
     }
 
@@ -59,6 +68,8 @@ class TechnicianController extends Controller
      */
     public function edit(User $technician)
     {
+        Gate::authorize('update', $technician);
+
         return redirect()->route('technicians.show', $technician);
     }
 
@@ -67,6 +78,8 @@ class TechnicianController extends Controller
      */
     public function update(Request $request, User $technician)
     {
+        Gate::authorize('update', $technician);
+
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $technician->id,
@@ -94,6 +107,8 @@ class TechnicianController extends Controller
      */
     public function destroy(User $technician)
     {
+        Gate::authorize('delete', $technician);
+
         $technician->delete();
 
         return redirect()->route('technicians.index');

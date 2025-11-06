@@ -55,4 +55,20 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(\App\Models\Ticket::class);
     }
+
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === \App\Enums\UserRole::Admin;
+    }
+
+    /**
+     * Check if the user is a technician.
+     */
+    public function isTechnician(): bool
+    {
+        return $this->role === \App\Enums\UserRole::Technician;
+    }
 }
