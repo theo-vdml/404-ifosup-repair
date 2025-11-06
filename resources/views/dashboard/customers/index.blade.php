@@ -87,8 +87,10 @@
 <x-dashboard-layout>
     <x-dashboard.page-header title="Clients" description="Gérer vos clients et leurs informations.">
         <x-slot name="actions">
+            @can('create', App\Models\Customer::class)
             <x-button color="primary" variant="soft" label="Nouveau Client" icon="heroicon-o-plus"
                 href="{{ route('customers.create') }}" />
+            @endcan
         </x-slot>
     </x-dashboard.page-header>
 

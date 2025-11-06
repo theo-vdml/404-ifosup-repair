@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CustomerController extends Controller
 {
@@ -12,6 +13,8 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
+        Gate::authorize('viewAny', Customer::class);
+
         $customers = Customer::sorted('created_at', 'desc')->filtered()->paginate(10)->withQueryString();
 
         return view('dashboard.customers.index', compact('customers'));
@@ -23,6 +26,8 @@ class CustomerController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', Customer::class);
+
         return view('dashboard.customers.create');
     }
 
@@ -31,6 +36,8 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create', Customer::class);
+
         $data = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -50,6 +57,8 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer)
     {
+        Gate::authorize('view', $customer);
+
         return view('dashboard.customers.show', compact('customer'));
     }
 
@@ -58,6 +67,8 @@ class CustomerController extends Controller
      */
     public function edit(Customer $customer)
     {
+        Gate::authorize('update', $customer);
+
         return view('dashboard.customers.edit', compact('customer'));
     }
 
@@ -66,6 +77,8 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer)
     {
+        Gate::authorize('update', $customer);
+
         $data = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -85,6 +98,8 @@ class CustomerController extends Controller
      */
     public function destroy(Customer $customer)
     {
+        Gate::authorize('delete', $customer);
+
         $customer->delete();
 
         return redirect()->route('customers.index');

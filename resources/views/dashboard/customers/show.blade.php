@@ -12,11 +12,17 @@
     </div>
 
     <div class="flex items-center justify-start gap-2 mb-6">
+        @can('create', App\Models\Ticket::class)
         <x-button variant="soft" color="primary" icon="heroicon-o-ticket" label="Ouvrir un ticket" />
+        @endcan
+        @can('update', $customer)
         <x-button variant="soft" color="secondary" icon="heroicon-o-pencil" label="Modifier"
             href="{{ route('customers.edit', $customer) }}" />
+        @endcan
+        @can('delete', $customer)
         <x-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-customer-deletion')"
             variant="soft" color="danger" icon="heroicon-o-trash" label="Supprimer" />
+        @endcan
     </div>
 
     <!-- Main Content -->
