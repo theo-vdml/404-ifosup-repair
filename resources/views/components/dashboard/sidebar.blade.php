@@ -44,11 +44,11 @@
                      <x-heroicon-o-rectangle-stack class="w-5 h-5" />
                  </x-slot>
              </x-dashboard.nav-link>
-              <x-dashboard.nav-link label="Mes Tickets" href="{{ route('tickets.my') }}">
-                  <x-slot name="icon">
-                      <x-heroicon-o-ticket class="w-5 h-5" />
-                  </x-slot>
-              </x-dashboard.nav-link>
+             <x-dashboard.nav-link label="Mes Tickets" href="{{ route('tickets.my') }}">
+                 <x-slot name="icon">
+                     <x-heroicon-o-ticket class="w-5 h-5" />
+                 </x-slot>
+             </x-dashboard.nav-link>
          </div>
          <div class="pt-4 border-t border-slate-200/50">
              <div class="px-4 py-2 text-xs font-semibold tracking-wider uppercase text-slate-500">Contacts</div>
@@ -57,13 +57,13 @@
                      <x-heroicon-o-users class="w-5 h-5" />
                  </x-slot>
              </x-dashboard.nav-link>
-              @can('viewAny', App\Models\User::class)
-              <x-dashboard.nav-link label="Techniciens" href="{{ route('technicians.index') }}">
-                  <x-slot name="icon">
-                      <x-heroicon-o-wrench-screwdriver class="w-5 h-5" />
-                  </x-slot>
-              </x-dashboard.nav-link>
-              @endcan
+             @can('viewAny', App\Models\User::class)
+                 <x-dashboard.nav-link label="Techniciens" href="{{ route('technicians.index') }}">
+                     <x-slot name="icon">
+                         <x-heroicon-o-wrench-screwdriver class="w-5 h-5" />
+                     </x-slot>
+                 </x-dashboard.nav-link>
+             @endcan
          </div>
          <div class="pt-4 border-t border-slate-200/50">
              <div class="px-4 py-2 text-xs font-semibold tracking-wider uppercase text-slate-500">Ressources</div>
@@ -85,16 +85,14 @@
                      <x-heroicon-o-adjustments-horizontal class="w-5 h-5" />
                  </x-slot>
              </x-dashboard.nav-link>
-             <x-dashboard.nav-link label="Mon Profil" href="#">
-                 <x-slot name="icon">
-                     <x-heroicon-o-user class="w-5 h-5" />
-                 </x-slot>
-             </x-dashboard.nav-link>
-             <x-dashboard.nav-link label="Déconnexion" href="#">
-                 <x-slot name="icon">
+             <form method="POST" action="{{ route('logout') }}">
+                 @csrf
+                 <button
+                     class="flex items-center px-4 py-3 space-x-3 transition-all duration-200 border border-transparent text-slate-700 hover:bg-purple-50/60 hover:text-slate-900 hover:border-purple-200/40 rounded-xl group w-full">
                      <x-heroicon-o-arrow-right-on-rectangle class="w-5 h-5" />
-                 </x-slot>
-             </x-dashboard.nav-link>
+                     <span class="font-medium">Déconnexion</span>
+                 </button>
+             </form>
          </div>
      </nav>
      <div class="p-4 border-t border-slate-200/50">
