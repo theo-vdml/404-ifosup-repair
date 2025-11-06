@@ -85,58 +85,17 @@
                     @if (!$ticket->status->marks_as_closed)
                         <!-- Add Comment Form -->
                         <div class="p-6 bg-slate-50">
-
-                            <h3 class="mb-4 font-semibold text-slate-900">Ajouter un commentaire</h3>
-
-                            <form action="{{ route('tickets.notes.store', $ticket) }}" method="POST" class="space-y-4">
-                                @csrf
-
-                                <!-- Type Selection -->
-                                {{-- <div>
-                                <label for="comment-type" class="block mb-2 text-sm font-medium text-slate-700">
-                                    Type d'action
-                                </label>
-                                <select id="comment-type" name="type"
-                                    class="w-full px-3 py-2 text-sm transition-colors bg-white border rounded-md border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="diagnostic">Diagnostic</option>
-                                    <option value="intervention">Intervention</option>
-                                    <option value="commentaire">Commentaire</option>
-                                </select>
-                            </div> --}}
-
-                                <!-- Textarea -->
-                                <div>
-                                    <label for="comment-text" class="block mb-2 text-sm font-medium text-slate-700">
-                                        Message
-                                    </label>
-                                    <textarea id="comment-text" name="comment" rows="4"
-                                        placeholder="Décrivez votre action ou ajoutez un commentaire..."
-                                        class="w-full px-3 py-2 text-sm transition-colors border rounded-md resize-none border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
-                                </div>
-
-                                <!-- Actions -->
-                                <div class="flex items-center justify-between pt-2">
-                                    <button type="button"
-                                        class="inline-flex items-center gap-2 px-3 py-2 text-sm transition-colors border rounded-md text-slate-600 border-slate-300 hover:bg-slate-50">
-                                        <x-heroicon-o-paper-clip class="w-4 h-4" />
-                                        Joindre un fichier
-                                    </button>
-
-                                    <div class="flex gap-2">
-                                        <button type="submit" name="action" value="publish_and_close"
-                                            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-colors rounded-md bg-slate-600 hover:bg-slate-700 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
-                                            <x-heroicon-o-check-circle class="w-4 h-4" />
-                                            Publier et fermer
-                                        </button>
-
-                                        <button type="submit" name="action" value="publish"
-                                            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                            <x-heroicon-o-paper-airplane class="w-4 h-4" />
-                                            Publier
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                            <x-form method="POST" multipart action="{{ route('tickets.notes.store', $ticket) }}">
+                                <x-form-field name="message"
+                                    placeholder="Décrivez votre action ou ajoutez un commentaire..." type="textarea"
+                                    label="Ajouter un commentaire" />
+                                <x-attachment-input name="attachments" button-label="Joindre des fichiers"
+                                    button-icon="heroicon-o-paper-clip" :multiple="true" />
+                                <x-slot name="actions">
+                                    <x-button type="submit" label="Publier" icon="heroicon-o-paper-airplane"
+                                        variant="solid" />
+                                </x-slot>
+                            </x-form>
                         </div>
                     @else
                         @php
