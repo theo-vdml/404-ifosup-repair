@@ -13,16 +13,17 @@
 
         <div>
             <h1 class="text-4xl font-medium text-slate-900">{{ $ticket->title }} <span
-                    class="text-slate-500 font-normal">#{{ $ticket->id }}</span></h1>
+                    class="font-normal text-slate-500">#{{ $ticket->id }}</span></h1>
             <p class="mt-2 text-slate-600">{{ $ticket->description }}</p>
         </div>
 
         <div>
-            <span
-                class="text-amber-500 bg-amber-500/20 border border-amber-500 rounded-full p-2 px-4 flex gap-2 items-center text-sm whitespace-nowrap">
+            {{-- <span
+                class="flex items-center gap-2 p-2 px-4 text-sm border rounded-full text-amber-500 bg-amber-500/20 border-amber-500 whitespace-nowrap">
                 <x-heroicon-o-clock class="w-4 h-4" />
                 {{ $ticket->status->label ?? $ticket->status->code }}
-            </span>
+            </span> --}}
+            <x-badge :label="$ticket->status->display_name" :color="$ticket->status->color" :icon="$ticket->status->icon" size="lg" />
         </div>
     </div>
 
@@ -31,10 +32,10 @@
 
         <div class="col-span-3 pr-6">
 
-            <div class="bg-white border-slate-300/50 border rounded-lg mb-16">
+            <div class="mb-16 bg-white border rounded-lg border-slate-300/50">
 
                 <div class="p-6 border-b border-slate-300/50">
-                    <h2 class="font-bold text-lg text-slate-900">Historique</h2>
+                    <h2 class="text-lg font-bold text-slate-900">Historique</h2>
                     <p class="text-slate-600">Suivi des actions effectuées sur le ticket et des commentaires des
                         techniciens.</p>
                 </div>
@@ -63,12 +64,12 @@
                             @break
                         @endswitch
                         @empty
-                            <div class="flex flex-col items-center justify-center py-16 px-6">
-                                <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                            <div class="flex flex-col items-center justify-center px-6 py-16">
+                                <div class="flex items-center justify-center w-20 h-20 mb-4 rounded-full bg-slate-100">
                                     <x-heroicon-o-clipboard-document-list class="w-10 h-10 text-slate-400" />
                                 </div>
-                                <h3 class="text-lg font-semibold text-slate-900 mb-2">Aucun événement pour le moment</h3>
-                                <p class="text-sm text-slate-600 text-center max-w-md mb-6">
+                                <h3 class="mb-2 text-lg font-semibold text-slate-900">Aucun événement pour le moment</h3>
+                                <p class="max-w-md mb-6 text-sm text-center text-slate-600">
                                     L'historique de ce ticket est vide. Les actions, modifications de statut et commentaires
                                     apparaîtront ici.
                                 </p>
@@ -85,18 +86,18 @@
                         <!-- Add Comment Form -->
                         <div class="p-6 bg-slate-50">
 
-                            <h3 class="font-semibold text-slate-900 mb-4">Ajouter un commentaire</h3>
+                            <h3 class="mb-4 font-semibold text-slate-900">Ajouter un commentaire</h3>
 
                             <form action="{{ route('tickets.notes.store', $ticket) }}" method="POST" class="space-y-4">
                                 @csrf
 
                                 <!-- Type Selection -->
                                 {{-- <div>
-                                <label for="comment-type" class="block text-sm font-medium text-slate-700 mb-2">
+                                <label for="comment-type" class="block mb-2 text-sm font-medium text-slate-700">
                                     Type d'action
                                 </label>
                                 <select id="comment-type" name="type"
-                                    class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-colors">
+                                    class="w-full px-3 py-2 text-sm transition-colors bg-white border rounded-md border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     <option value="diagnostic">Diagnostic</option>
                                     <option value="intervention">Intervention</option>
                                     <option value="commentaire">Commentaire</option>
@@ -105,31 +106,31 @@
 
                                 <!-- Textarea -->
                                 <div>
-                                    <label for="comment-text" class="block text-sm font-medium text-slate-700 mb-2">
+                                    <label for="comment-text" class="block mb-2 text-sm font-medium text-slate-700">
                                         Message
                                     </label>
                                     <textarea id="comment-text" name="comment" rows="4"
                                         placeholder="Décrivez votre action ou ajoutez un commentaire..."
-                                        class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-colors"></textarea>
+                                        class="w-full px-3 py-2 text-sm transition-colors border rounded-md resize-none border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
                                 </div>
 
                                 <!-- Actions -->
                                 <div class="flex items-center justify-between pt-2">
                                     <button type="button"
-                                        class="inline-flex items-center gap-2 px-3 py-2 text-sm text-slate-600 border border-slate-300 hover:bg-slate-50 rounded-md transition-colors">
+                                        class="inline-flex items-center gap-2 px-3 py-2 text-sm transition-colors border rounded-md text-slate-600 border-slate-300 hover:bg-slate-50">
                                         <x-heroicon-o-paper-clip class="w-4 h-4" />
                                         Joindre un fichier
                                     </button>
 
                                     <div class="flex gap-2">
                                         <button type="submit" name="action" value="publish_and_close"
-                                            class="inline-flex items-center gap-2 px-4 py-2 bg-slate-600 text-white text-sm font-medium rounded-md hover:bg-slate-700 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition-colors">
+                                            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-colors rounded-md bg-slate-600 hover:bg-slate-700 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
                                             <x-heroicon-o-check-circle class="w-4 h-4" />
                                             Publier et fermer
                                         </button>
 
                                         <button type="submit" name="action" value="publish"
-                                            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                                             <x-heroicon-o-paper-airplane class="w-4 h-4" />
                                             Publier
                                         </button>
@@ -138,22 +139,117 @@
                             </form>
                         </div>
                     @else
-                        <div class="border-t border-slate-300/50 bg-gradient-to-b from-emerald-50/50 to-white">
+                        @php
+                            $colors = match ($ticket->status->color) {
+                                'red' => [
+                                    'gradient' => 'bg-gradient-to-t from-red-50/90 to-white',
+                                    'bg' => 'bg-red-100',
+                                    'text' => 'text-red-600',
+                                ],
+                                'orange' => [
+                                    'gradient' => 'bg-gradient-to-t from-orange-50/90 to-white',
+                                    'bg' => 'bg-orange-100',
+                                    'text' => 'text-orange-600',
+                                ],
+                                'amber' => [
+                                    'gradient' => 'bg-gradient-to-t from-amber-50/90 to-white',
+                                    'bg' => 'bg-amber-100',
+                                    'text' => 'text-amber-600',
+                                ],
+                                'yellow' => [
+                                    'gradient' => 'bg-gradient-to-t from-yellow-50/90 to-white',
+                                    'bg' => 'bg-yellow-100',
+                                    'text' => 'text-yellow-600',
+                                ],
+                                'lime' => [
+                                    'gradient' => 'bg-gradient-to-t from-lime-50/90 to-white',
+                                    'bg' => 'bg-lime-100',
+                                    'text' => 'text-lime-600',
+                                ],
+                                'green' => [
+                                    'gradient' => 'bg-gradient-to-t from-green-50/90 to-white',
+                                    'bg' => 'bg-green-100',
+                                    'text' => 'text-green-600',
+                                ],
+                                'emerald' => [
+                                    'gradient' => 'bg-gradient-to-t from-emerald-50/90 to-white',
+                                    'bg' => 'bg-emerald-100',
+                                    'text' => 'text-emerald-600',
+                                ],
+                                'teal' => [
+                                    'gradient' => 'bg-gradient-to-t from-teal-50/90 to-white',
+                                    'bg' => 'bg-teal-100',
+                                    'text' => 'text-teal-600',
+                                ],
+                                'cyan' => [
+                                    'gradient' => 'bg-gradient-to-t from-cyan-50/90 to-white',
+                                    'bg' => 'bg-cyan-100',
+                                    'text' => 'text-cyan-600',
+                                ],
+                                'sky' => [
+                                    'gradient' => 'bg-gradient-to-t from-sky-50/90 to-white',
+                                    'bg' => 'bg-sky-100',
+                                    'text' => 'text-sky-600',
+                                ],
+                                'blue' => [
+                                    'gradient' => 'bg-gradient-to-t from-blue-50/90 to-white',
+                                    'bg' => 'bg-blue-100',
+                                    'text' => 'text-blue-600',
+                                ],
+                                'indigo' => [
+                                    'gradient' => 'bg-gradient-to-t from-indigo-50/90 to-white',
+                                    'bg' => 'bg-indigo-100',
+                                    'text' => 'text-indigo-600',
+                                ],
+                                'violet' => [
+                                    'gradient' => 'bg-gradient-to-t from-violet-50/90 to-white',
+                                    'bg' => 'bg-violet-100',
+                                    'text' => 'text-violet-600',
+                                ],
+                                'purple' => [
+                                    'gradient' => 'bg-gradient-to-t from-purple-50/90 to-white',
+                                    'bg' => 'bg-purple-100',
+                                    'text' => 'text-purple-600',
+                                ],
+                                'fuchsia' => [
+                                    'gradient' => 'bg-gradient-to-t from-fuchsia-50/90 to-white',
+                                    'bg' => 'bg-fuchsia-100',
+                                    'text' => 'text-fuchsia-600',
+                                ],
+                                'pink' => [
+                                    'gradient' => 'bg-gradient-to-t from-pink-50/90 to-white',
+                                    'bg' => 'bg-pink-100',
+                                    'text' => 'text-pink-600',
+                                ],
+                                'rose' => [
+                                    'gradient' => 'bg-gradient-to-t from-rose-50/90 to-white',
+                                    'bg' => 'bg-rose-100',
+                                    'text' => 'text-rose-600',
+                                ],
+                                default => [
+                                    'gradient' => 'bg-gradient-to-t from-gray-50/90 to-white',
+                                    'bg' => 'bg-gray-100',
+                                    'text' => 'text-gray-600',
+                                ],
+                            };
+                        @endphp
+                        <div class="border-t border-slate-300/50 {{ $colors['gradient'] }}">
                             <div class="p-8">
                                 <div class="flex items-start gap-5">
                                     <!-- Icon -->
                                     <div class="flex-shrink-0">
-                                        <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
-                                            <x-heroicon-o-lock-closed class="w-6 h-6 text-emerald-600" />
+                                        <div
+                                            class="flex items-center justify-center w-12 h-12 rounded-full {{ $colors['bg'] }}">
+                                            <x-heroicon-o-lock-closed class="w-6 h-6 {{ $colors['text'] }}" />
                                         </div>
                                     </div>
 
                                     <!-- Content -->
                                     <div class="flex-1">
-                                        <h4 class="text-base font-semibold text-slate-900 mb-2">
-                                            Ticket fermé
+                                        <h4 class="mb-2 text-base font-semibold text-slate-900">
+                                            Ticket fermé ({{ $ticket->status->display_name }})
                                         </h4>
-                                        <p class="text-sm text-slate-600 leading-relaxed mb-3">
+                                        <p class="mb-3 text-sm leading-relaxed text-slate-600">
                                             Ce ticket a été marqué comme fermé. Les commentaires et modifications ne sont
                                             plus autorisés sur ce ticket.
                                         </p>
@@ -172,9 +268,9 @@
             <div class="col-span-1 ">
 
                 <!-- Assignés Section -->
-                <div class="bg-white border border-slate-300/50 rounded-lg mb-4">
-                    <div class="p-5 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white rounded-t-lg">
-                        <h3 class="font-semibold text-slate-900 flex items-center gap-2">
+                <div class="mb-4 bg-white border rounded-lg border-slate-300/50">
+                    <div class="p-5 border-b rounded-t-lg border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+                        <h3 class="flex items-center gap-2 font-semibold text-slate-900">
                             <x-heroicon-o-users class="w-5 h-5 text-slate-600" />
                             Assignés
                         </h3>
@@ -182,11 +278,11 @@
 
                     <!-- Assigned Users List -->
                     <div class="p-5">
-                        <div class="space-y-3 mb-4">
+                        <div class="mb-4 space-y-3">
                             @forelse ($ticket->users as $user)
                                 <div class="flex items-center gap-3">
                                     <div
-                                        class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                        class="flex items-center justify-center flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full">
                                         <x-heroicon-o-user class="w-4 h-4 text-blue-600" />
                                     </div>
                                     <div class="flex-1 min-w-0">
@@ -196,16 +292,16 @@
                                     <form action="{{ route('tickets.unassign', [$ticket, $user]) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-slate-600 hover:text-red-600 transition-colors">
+                                        <button type="submit" class="transition-colors text-slate-600 hover:text-red-600">
                                             <x-heroicon-o-trash class="w-4 h-4" />
                                         </button>
                                     </form>
                                 </div>
                             @empty
                                 <div
-                                    class="flex items-center gap-3 py-4 px-3 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+                                    class="flex items-center gap-3 px-3 py-4 border border-dashed rounded-lg bg-slate-50 border-slate-200">
                                     <div
-                                        class="w-8 h-8 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                                        class="flex items-center justify-center flex-shrink-0 w-8 h-8 bg-white rounded-full">
                                         <x-heroicon-o-user-plus class="w-4 h-4 text-slate-400" />
                                     </div>
                                     <p class="text-xs text-slate-500">
@@ -216,14 +312,15 @@
                         </div>
 
                         <!-- Add User Form -->
-                        <form action="{{ route('tickets.assign', $ticket) }}" method="POST" class="flex items-start gap-2">
+                        <form action="{{ route('tickets.assign', $ticket) }}" method="POST"
+                            class="flex items-start gap-2">
                             @csrf
                             <div class="flex-1">
                                 <x-async-form-field name="user_id" route="{{ route('api.users.index') }}"
                                     placeholder="Ajouter un technicien..." size="fill">
                                     <div class="flex items-center space-x-3">
                                         <div
-                                            class="flex-shrink-0 w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center">
+                                            class="flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-full bg-slate-100">
                                             <x-heroicon-o-user class="w-5 h-5 text-gray-400" />
                                         </div>
                                         <div>
@@ -234,7 +331,7 @@
                                 </x-async-form-field>
                             </div>
                             <button type="submit"
-                                class="flex-shrink-0 w-9 h-9 inline-flex items-center justify-center bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                class="inline-flex items-center justify-center flex-shrink-0 text-white transition-colors bg-blue-600 rounded-md w-9 h-9 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                                 <x-heroicon-o-plus class="w-5 h-5" />
                             </button>
                         </form>
@@ -242,9 +339,9 @@
                 </div>
 
                 <!-- Informations Client Section -->
-                <div class="bg-white border border-slate-300/50 rounded-lg mb-4">
-                    <div class="p-5 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white  rounded-t-lg">
-                        <h3 class="font-semibold text-slate-900 flex items-center gap-2">
+                <div class="mb-4 bg-white border rounded-lg border-slate-300/50">
+                    <div class="p-5 border-b rounded-t-lg border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+                        <h3 class="flex items-center gap-2 font-semibold text-slate-900">
                             <x-heroicon-o-user-circle class="w-5 h-5 text-slate-600" />
                             Informations client
                         </h3>
@@ -252,10 +349,10 @@
 
                     <div class="p-5">
                         <!-- Customer Info -->
-                        <div class="space-y-3 mb-4">
+                        <div class="mb-4 space-y-3">
                             <div class="flex items-center gap-3">
                                 <div
-                                    class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                                    class="flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-full bg-slate-100">
                                     <x-heroicon-o-user class="w-4 h-4 text-slate-600" />
                                 </div>
                                 <div class="flex-1 min-w-0">
@@ -267,7 +364,7 @@
 
                         <!-- View Profile Button -->
                         <a href="{{ route('customers.show', $ticket->customer) }}"
-                            class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 text-sm text-slate-600 border border-slate-300 hover:bg-slate-50 rounded-md transition-colors">
+                            class="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm transition-colors border rounded-md text-slate-600 border-slate-300 hover:bg-slate-50">
                             <x-heroicon-o-eye class="w-4 h-4" />
                             Voir le profil
                         </a>
@@ -275,9 +372,9 @@
                 </div>
 
                 <!-- Détails du Ticket Section -->
-                <div class="bg-white border border-slate-300/50 rounded-lg">
-                    <div class="p-5 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white  rounded-t-lg">
-                        <h3 class="font-semibold text-slate-900 flex items-center gap-2">
+                <div class="bg-white border rounded-lg border-slate-300/50">
+                    <div class="p-5 border-b rounded-t-lg border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+                        <h3 class="flex items-center gap-2 font-semibold text-slate-900">
                             <x-heroicon-o-cog-6-tooth class="w-5 h-5 text-slate-600" />
                             Détails du ticket
                         </h3>
@@ -291,7 +388,7 @@
                             <!-- Priority -->
                             <div>
                                 <label for="priority_id"
-                                    class="block text-xs font-medium text-slate-700 mb-2 uppercase tracking-wider">
+                                    class="block mb-2 text-xs font-medium tracking-wider uppercase text-slate-700">
                                     Priorité
                                 </label>
                                 <div class="relative">
@@ -305,7 +402,7 @@
                                         @endforeach
                                     </select>
                                     <div
-                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-600">
+                                        class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-600">
                                         <x-heroicon-o-chevron-down class="w-4 h-4" />
                                     </div>
                                 </div>
@@ -314,7 +411,7 @@
                             <!-- Status -->
                             <div>
                                 <label for="status_id"
-                                    class="block text-xs font-medium text-slate-700 mb-2 uppercase tracking-wider">
+                                    class="block mb-2 text-xs font-medium tracking-wider uppercase text-slate-700">
                                     Statut
                                 </label>
                                 <div class="relative">
@@ -328,7 +425,7 @@
                                         @endforeach
                                     </select>
                                     <div
-                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-600">
+                                        class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-600">
                                         <x-heroicon-o-chevron-down class="w-4 h-4" />
                                     </div>
                                 </div>

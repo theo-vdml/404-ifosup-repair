@@ -1,15 +1,46 @@
 @php
+    $columns = [
+        'id' => [
+            'label' => 'ID',
+            'key' => 'id',
+            'href' => fn($row) => route('tickets.show', $row),
+            'sortable' => true,
+            'format' => fn($value) => '# ' . $value,
+        ],
+        'status' => [
+            'label' => 'Status',
+            'slot' =>
+                '<x-badge :label="$row->status->display_name" :color="$row->status->color" :icon="$row->status->icon" />',
+        ],
+        'title' => [
+            'label' => 'Intitulé',
+            'key' => 'title',
+            'href' => fn($row) => route('tickets.show', $row),
+            'icon' => 'heroicon-o-ticket',
+            'sortable' => true,
+        ],
+        'client' => [
+            'label' => 'Client',
+            'key' => 'customer.full_name',
+            'href' => fn($row) => route('customers.show', $row->customer),
+            'icon' => 'heroicon-o-user',
+            'sortable' => true,
+        ],
+        'date' => [
+            'label' => 'Ouvert le',
+            'key' => 'created_at',
+            'format' => fn($value) => \Carbon\Carbon::parse($value)->format('d/m/Y'),
+            'icon' => 'heroicon-o-calendar',
+            'sortable' => true,
+        ],
+    ];
 
     $filters = [
         [
             'key' => 'status.code',
             'label' => 'Statut',
             'type' => 'select',
-            'options' => [
-                'open' => 'Ouvert',
-                'closed' => 'Fermé',
-                'pending' => 'En attente',
-            ],
+            'options' => \App\Models\TicketStatus::getSelectOptions(),
             'unselectable' => true,
             'placeholder' => 'Tous',
         ],
@@ -61,41 +92,6 @@
             'placeholder' => 'Rechercher par nom',
             'operator' => 'like',
             'half' => true,
-        ],
-    ];
-
-    $columns = [
-        'id' => [
-            'label' => 'ID',
-            'key' => 'id',
-            'href' => fn($row) => route('tickets.show', $row),
-            'sortable' => true,
-            'format' => fn($value) => '# ' . $value,
-        ],
-        'status' => [
-            'label' => 'Status',
-            'slot' => 'dashboard.tickets.partials.status-cell',
-        ],
-        'title' => [
-            'label' => 'Intitulé',
-            'key' => 'title',
-            'href' => fn($row) => route('tickets.show', $row),
-            'icon' => 'heroicon-o-ticket',
-            'sortable' => true,
-        ],
-        'client' => [
-            'label' => 'Client',
-            'key' => 'customer.full_name',
-            'href' => fn($row) => route('customers.show', $row->customer),
-            'icon' => 'heroicon-o-user',
-            'sortable' => true,
-        ],
-        'date' => [
-            'label' => 'Ouvert le',
-            'key' => 'created_at',
-            'format' => fn($value) => \Carbon\Carbon::parse($value)->format('d/m/Y'),
-            'icon' => 'heroicon-o-calendar',
-            'sortable' => true,
         ],
     ];
 @endphp

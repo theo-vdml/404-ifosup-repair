@@ -17,6 +17,8 @@ return new class extends Migration
             $table->timestamps();
             $table->string('code')->unique();
             $table->string('label')->nullable();
+            $table->string('color')->nullable();
+            $table->string('icon')->nullable();
             $table->boolean('is_builtin')->default(false); // Indicates if this is a built-in status (like OPEN and CLOSED)
             $table->boolean('marks_as_closed')->default(false); // Indicates if this status means the ticket is closed
         });
@@ -25,15 +27,29 @@ return new class extends Migration
         DB::table('ticket_statuses')->insert([
             [
                 'code' => 'open',
-                // Label left undefined for i18n purposes
+                'label' => 'Ouvert',
+                'color' => 'emerald',
+                'icon' => 'heroicon-o-minus-circle',
                 'is_builtin' => true,
                 'marks_as_closed' => false,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
+                'code' => 'closed_uncompleted',
+                'label' => 'Échoué',
+                'color' => 'red',
+                'icon' => 'heroicon-o-x-circle',
+                'is_builtin' => true,
+                'marks_as_closed' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
                 'code' => 'closed',
-                // Label left undefined for i18n purposes
+                'label' => 'Terminé',
+                'color' => 'purple',
+                'icon' => 'heroicon-o-check-circle',
                 'is_builtin' => true,
                 'marks_as_closed' => true,
                 'created_at' => now(),
