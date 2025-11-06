@@ -11,6 +11,8 @@ class TicketStatus extends Model
     protected $fillable = [
         'code',
         'label',
+        'color',
+        'icon',
         'marks_as_closed',
     ];
 
@@ -36,6 +38,11 @@ class TicketStatus extends Model
         });
     }
 
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->label ?? ucfirst($this->code);
+    }
+
     /**
      * Retrieve the built-in "open" status.
      */
@@ -50,5 +57,17 @@ class TicketStatus extends Model
     public static function closed(): TicketStatus|null
     {
         return self::where('code', 'closed')->first();
+    }
+
+    public static function closedUncompleted(): TicketStatus|null
+    {
+        return self::where('code', 'closed_uncompleted')->first();
+    }
+
+    public static function getSelectOptions(): array
+    {
+        return self::orderBy('label')->get()->mapWithKeys(function ($status) {
+            return [$status->code => $status->display_name];
+        })->toArray();
     }
 }

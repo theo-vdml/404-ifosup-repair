@@ -124,6 +124,11 @@ trait Filterable
         $joinedPath = [];
         $alias = $base->getTable(); // Initialize alias to base table name
 
+        // Add explicit SELECT for base table before any joins
+        if (empty($currentQuery->getQuery()->columns)) {
+            $currentQuery->select($this->getTable() . '.*');
+        }
+
         while (count($parts) > 1) {
             $relation = array_shift($parts);
 
