@@ -9,15 +9,15 @@
 
 <x-dashboard-layout>
     <div
-        class="flex flex-col gap-4 pb-8 mb-8 border-b border-slate-300/50 md:flex-row md:items-start md:justify-between">
+        class="flex flex-col gap-4 pb-6 mb-6 border-b md:pb-8 md:mb-8 border-slate-300/50 md:flex-row md:items-start md:justify-between">
 
-        <div>
-            <h1 class="text-4xl font-medium text-slate-900">{{ $ticket->title }} <span
+        <div class="flex-1 min-w-0">
+            <h1 class="text-2xl font-medium md:text-4xl text-slate-900">{{ $ticket->title }} <span
                     class="font-normal text-slate-500">#{{ $ticket->id }}</span></h1>
-            <p class="mt-2 text-slate-600">{{ $ticket->description }}</p>
+            <p class="mt-2 text-sm md:text-base text-slate-600">{{ $ticket->description }}</p>
         </div>
 
-        <div>
+        <div class="flex-shrink-0">
             {{-- <span
                 class="flex items-center gap-2 p-2 px-4 text-sm border rounded-full text-amber-500 bg-amber-500/20 border-amber-500 whitespace-nowrap">
                 <x-heroicon-o-clock class="w-4 h-4" />
@@ -28,15 +28,15 @@
     </div>
 
 
-    <div class="grid grid-cols-4">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
 
-        <div class="col-span-3 pr-6">
+        <div class="col-span-1 lg:col-span-3 lg:pr-6">
 
-            <div class="mb-16 bg-white border rounded-lg border-slate-300/50">
+            <div class="mb-8 bg-white border rounded-lg lg:mb-16 border-slate-300/50">
 
-                <div class="p-6 border-b border-slate-300/50">
-                    <h2 class="text-lg font-bold text-slate-900">Historique</h2>
-                    <p class="text-slate-600">Suivi des actions effectuées sur le ticket et des commentaires des
+                <div class="p-4 border-b md:p-6 border-slate-300/50">
+                    <h2 class="text-base font-bold md:text-lg text-slate-900">Historique</h2>
+                    <p class="text-sm md:text-base text-slate-600">Suivi des actions effectuées sur le ticket et des commentaires des
                         techniciens.</p>
                 </div>
 
@@ -84,7 +84,7 @@
 
                     @if (!$ticket->status->marks_as_closed)
                         <!-- Add Comment Form -->
-                        <div class="p-6 bg-slate-50">
+                        <div class="p-4 md:p-6 bg-slate-50">
                             <x-form method="POST" multipart action="{{ route('tickets.notes.store', $ticket) }}">
                                 <x-form-field name="message"
                                     placeholder="Décrivez votre action ou ajoutez un commentaire..." type="textarea"
@@ -193,22 +193,22 @@
                             };
                         @endphp
                         <div class="border-t border-slate-300/50 {{ $colors['gradient'] }}">
-                            <div class="p-8">
-                                <div class="flex items-start gap-5">
+                            <div class="p-4 md:p-8">
+                                <div class="flex items-start gap-3 md:gap-5">
                                     <!-- Icon -->
                                     <div class="flex-shrink-0">
                                         <div
-                                            class="flex items-center justify-center w-12 h-12 rounded-full {{ $colors['bg'] }}">
-                                            <x-heroicon-o-lock-closed class="w-6 h-6 {{ $colors['text'] }}" />
+                                            class="flex items-center justify-center w-10 h-10 rounded-full md:w-12 md:h-12 {{ $colors['bg'] }}">
+                                            <x-heroicon-o-lock-closed class="w-5 h-5 md:w-6 md:h-6 {{ $colors['text'] }}" />
                                         </div>
                                     </div>
 
                                     <!-- Content -->
-                                    <div class="flex-1">
-                                        <h4 class="mb-2 text-base font-semibold text-slate-900">
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="mb-2 text-sm font-semibold md:text-base text-slate-900">
                                             Ticket fermé ({{ $ticket->status->display_name }})
                                         </h4>
-                                        <p class="mb-3 text-sm leading-relaxed text-slate-600">
+                                        <p class="mb-3 text-xs leading-relaxed md:text-sm text-slate-600">
                                             Ce ticket a été marqué comme fermé. Les commentaires et modifications ne sont
                                             plus autorisés sur ce ticket.
                                         </p>
@@ -224,11 +224,11 @@
                 </div>
 
             </div>
-            <div class="col-span-1 ">
+            <div class="col-span-1 space-y-4">
 
                 @can('assignUser', $ticket)
                 <!-- Assignés Section -->
-                <div class="mb-4 bg-white border rounded-lg border-slate-300/50">
+                <div class="bg-white border rounded-lg border-slate-300/50">
                     <div class="p-5 border-b rounded-t-lg border-slate-200 bg-gradient-to-r from-slate-50 to-white">
                         <h3 class="flex items-center gap-2 font-semibold text-slate-900">
                             <x-heroicon-o-users class="w-5 h-5 text-slate-600" />
@@ -273,7 +273,7 @@
 
                         <!-- Add User Form -->
                         <form action="{{ route('tickets.assign', $ticket) }}" method="POST"
-                            class="flex items-start gap-2">
+                            class="flex flex-col gap-2 sm:flex-row sm:items-start">
                             @csrf
                             <div class="flex-1">
                                 <x-async-form-field name="user_id" route="{{ route('api.users.index') }}"
@@ -291,8 +291,9 @@
                                 </x-async-form-field>
                             </div>
                             <button type="submit"
-                                class="inline-flex items-center justify-center flex-shrink-0 text-white transition-colors bg-blue-600 rounded-md w-9 h-9 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                class="inline-flex items-center justify-center flex-shrink-0 text-white transition-colors bg-blue-600 rounded-md w-full sm:w-9 h-9 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                                 <x-heroicon-o-plus class="w-5 h-5" />
+                                <span class="ml-2 sm:hidden">Ajouter</span>
                             </button>
                         </form>
                     </div>
@@ -300,7 +301,7 @@
                 @endcan
 
                 <!-- Informations Client Section -->
-                <div class="mb-4 bg-white border rounded-lg border-slate-300/50">
+                <div class="bg-white border rounded-lg border-slate-300/50">
                     <div class="p-5 border-b rounded-t-lg border-slate-200 bg-gradient-to-r from-slate-50 to-white">
                         <h3 class="flex items-center gap-2 font-semibold text-slate-900">
                             <x-heroicon-o-user-circle class="w-5 h-5 text-slate-600" />
