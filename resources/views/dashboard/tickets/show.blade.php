@@ -8,6 +8,9 @@
 @endphp
 
 <x-dashboard-layout>
+
+    {{-- Ticket Header --}}
+
     <div
         class="flex flex-col gap-4 pb-6 mb-6 border-b md:pb-8 md:mb-8 border-slate-300/50 md:flex-row md:items-start md:justify-between">
 
@@ -18,216 +21,214 @@
         </div>
 
         <div class="flex-shrink-0">
-            {{-- <span
-                class="flex items-center gap-2 p-2 px-4 text-sm border rounded-full text-amber-500 bg-amber-500/20 border-amber-500 whitespace-nowrap">
-                <x-heroicon-o-clock class="w-4 h-4" />
-                {{ $ticket->status->label ?? $ticket->status->code }}
-            </span> --}}
             <x-badge :label="$ticket->status->display_name" :color="$ticket->status->color" :icon="$ticket->status->icon" size="lg" />
         </div>
     </div>
 
 
+    {{-- Ticket Body --}}
+
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+
+        {{-- Ticket History --}}
 
         <div class="col-span-1 lg:col-span-3 lg:pr-6">
 
+            {{-- Ticket History Container --}}
+
             <div class="mb-8 bg-white border rounded-lg lg:mb-16 border-slate-300/50">
+
+                {{-- Ticket History Header --}}
 
                 <div class="p-4 border-b md:p-6 border-slate-300/50">
                     <h2 class="text-base font-bold md:text-lg text-slate-900">Historique</h2>
-                    <p class="text-sm md:text-base text-slate-600">Suivi des actions effectuées sur le ticket et des commentaires des
+                    <p class="text-sm md:text-base text-slate-600">Suivi des actions effectuées sur le ticket et des
+                        commentaires des
                         techniciens.</p>
                 </div>
 
-                <div>
-                    @forelse ($ticket->timeline() as $event)
-                        @switch($event['type'])
-                            @case(App\Enums\TimelineEventType::Note)
-                                <x-timeline.note :data="$event['data']" />
-                            @break
-
-                            @case(App\Enums\TimelineEventType::StatusChange)
-                                <x-timeline.status :data="$event['data']" />
-                            @break
-
-                            @case(App\Enums\TimelineEventType::PriorityChange)
-                                <x-timeline.priority :data="$event['data']" />
-                            @break
-
-                            @case(App\Enums\TimelineEventType::Assigned)
-                                <x-timeline.assignment :data="$event['data']" />
-                            @break
-
-                            @case(App\Enums\TimelineEventType::Unassigned)
-                                <x-timeline.unassignment :data="$event['data']" />
-                            @break
-                        @endswitch
-                        @empty
-                            <div class="flex flex-col items-center justify-center px-6 py-16">
-                                <div class="flex items-center justify-center w-20 h-20 mb-4 rounded-full bg-slate-100">
-                                    <x-heroicon-o-clipboard-document-list class="w-10 h-10 text-slate-400" />
-                                </div>
-                                <h3 class="mb-2 text-lg font-semibold text-slate-900">Aucun événement pour le moment</h3>
-                                <p class="max-w-md mb-6 text-sm text-center text-slate-600">
-                                    L'historique de ce ticket est vide. Les actions, modifications de statut et commentaires
-                                    apparaîtront ici.
-                                </p>
-                                <div class="flex items-center gap-2 text-xs text-slate-500">
-                                    <x-heroicon-o-light-bulb class="w-4 h-4" />
-                                    <span>Commencez par ajouter un commentaire ci-dessous</span>
-                                </div>
-                            </div>
-                        @endforelse
-
+                @forelse ($ticket->timeline() as $event)
+                    {{-- Ticket History TimeLine --}}
+                    <div>
+                        @if ($event['type'] === App\Enums\TimelineEventType::Note)
+                            <x-timeline.note :data="$event['data']" />
+                        @elseif($event['type'] === App\Enums\TimelineEventType::StatusChange)
+                            <x-timeline.status :data="$event['data']" />
+                        @elseif($event['type'] === App\Enums\TimelineEventType::PriorityChange)
+                            <x-timeline.priority :data="$event['data']" />
+                        @elseif($event['type'] === App\Enums\TimelineEventType::Assigned)
+                            <x-timeline.assignment :data="$event['data']" />
+                        @elseif($event['type'] === App\Enums\TimelineEventType::Unassigned)
+                            <x-timeline.unassignment :data="$event['data']" />
+                        @endif
                     </div>
-
-                    @if (!$ticket->status->marks_as_closed)
-                        <!-- Add Comment Form -->
-                        <div class="p-4 md:p-6 bg-slate-50">
-                            <x-form method="POST" multipart action="{{ route('tickets.notes.store', $ticket) }}">
-                                <x-form-field name="message"
-                                    placeholder="Décrivez votre action ou ajoutez un commentaire..." type="textarea"
-                                    label="Ajouter un commentaire" />
-                                <x-attachment-input name="attachments" button-label="Joindre des fichiers"
-                                    button-icon="heroicon-o-paper-clip" :multiple="true" />
-                                <x-slot name="actions">
-                                    <x-button type="submit" label="Publier" icon="heroicon-o-paper-airplane"
-                                        variant="solid" />
-                                </x-slot>
-                            </x-form>
+                @empty
+                    {{-- Ticket History Empty State --}}
+                    <div class="flex flex-col items-center justify-center px-6 py-16">
+                        <div class="flex items-center justify-center w-20 h-20 mb-4 rounded-full bg-slate-100">
+                            <x-heroicon-o-clipboard-document-list class="w-10 h-10 text-slate-400" />
                         </div>
-                    @else
-                        @php
-                            $colors = match ($ticket->status->color) {
-                                'red' => [
-                                    'gradient' => 'bg-gradient-to-t from-red-50/90 to-white',
-                                    'bg' => 'bg-red-100',
-                                    'text' => 'text-red-600',
-                                ],
-                                'orange' => [
-                                    'gradient' => 'bg-gradient-to-t from-orange-50/90 to-white',
-                                    'bg' => 'bg-orange-100',
-                                    'text' => 'text-orange-600',
-                                ],
-                                'amber' => [
-                                    'gradient' => 'bg-gradient-to-t from-amber-50/90 to-white',
-                                    'bg' => 'bg-amber-100',
-                                    'text' => 'text-amber-600',
-                                ],
-                                'yellow' => [
-                                    'gradient' => 'bg-gradient-to-t from-yellow-50/90 to-white',
-                                    'bg' => 'bg-yellow-100',
-                                    'text' => 'text-yellow-600',
-                                ],
-                                'lime' => [
-                                    'gradient' => 'bg-gradient-to-t from-lime-50/90 to-white',
-                                    'bg' => 'bg-lime-100',
-                                    'text' => 'text-lime-600',
-                                ],
-                                'green' => [
-                                    'gradient' => 'bg-gradient-to-t from-green-50/90 to-white',
-                                    'bg' => 'bg-green-100',
-                                    'text' => 'text-green-600',
-                                ],
-                                'emerald' => [
-                                    'gradient' => 'bg-gradient-to-t from-emerald-50/90 to-white',
-                                    'bg' => 'bg-emerald-100',
-                                    'text' => 'text-emerald-600',
-                                ],
-                                'teal' => [
-                                    'gradient' => 'bg-gradient-to-t from-teal-50/90 to-white',
-                                    'bg' => 'bg-teal-100',
-                                    'text' => 'text-teal-600',
-                                ],
-                                'cyan' => [
-                                    'gradient' => 'bg-gradient-to-t from-cyan-50/90 to-white',
-                                    'bg' => 'bg-cyan-100',
-                                    'text' => 'text-cyan-600',
-                                ],
-                                'sky' => [
-                                    'gradient' => 'bg-gradient-to-t from-sky-50/90 to-white',
-                                    'bg' => 'bg-sky-100',
-                                    'text' => 'text-sky-600',
-                                ],
-                                'blue' => [
-                                    'gradient' => 'bg-gradient-to-t from-blue-50/90 to-white',
-                                    'bg' => 'bg-blue-100',
-                                    'text' => 'text-blue-600',
-                                ],
-                                'indigo' => [
-                                    'gradient' => 'bg-gradient-to-t from-indigo-50/90 to-white',
-                                    'bg' => 'bg-indigo-100',
-                                    'text' => 'text-indigo-600',
-                                ],
-                                'violet' => [
-                                    'gradient' => 'bg-gradient-to-t from-violet-50/90 to-white',
-                                    'bg' => 'bg-violet-100',
-                                    'text' => 'text-violet-600',
-                                ],
-                                'purple' => [
-                                    'gradient' => 'bg-gradient-to-t from-purple-50/90 to-white',
-                                    'bg' => 'bg-purple-100',
-                                    'text' => 'text-purple-600',
-                                ],
-                                'fuchsia' => [
-                                    'gradient' => 'bg-gradient-to-t from-fuchsia-50/90 to-white',
-                                    'bg' => 'bg-fuchsia-100',
-                                    'text' => 'text-fuchsia-600',
-                                ],
-                                'pink' => [
-                                    'gradient' => 'bg-gradient-to-t from-pink-50/90 to-white',
-                                    'bg' => 'bg-pink-100',
-                                    'text' => 'text-pink-600',
-                                ],
-                                'rose' => [
-                                    'gradient' => 'bg-gradient-to-t from-rose-50/90 to-white',
-                                    'bg' => 'bg-rose-100',
-                                    'text' => 'text-rose-600',
-                                ],
-                                default => [
-                                    'gradient' => 'bg-gradient-to-t from-gray-50/90 to-white',
-                                    'bg' => 'bg-gray-100',
-                                    'text' => 'text-gray-600',
-                                ],
-                            };
-                        @endphp
-                        <div class="border-t border-slate-300/50 {{ $colors['gradient'] }}">
-                            <div class="p-4 md:p-8">
-                                <div class="flex items-start gap-3 md:gap-5">
-                                    <!-- Icon -->
-                                    <div class="flex-shrink-0">
-                                        <div
-                                            class="flex items-center justify-center w-10 h-10 rounded-full md:w-12 md:h-12 {{ $colors['bg'] }}">
-                                            <x-heroicon-o-lock-closed class="w-5 h-5 md:w-6 md:h-6 {{ $colors['text'] }}" />
-                                        </div>
-                                    </div>
+                        <h3 class="mb-2 text-lg font-semibold text-slate-900">Aucun événement pour le moment</h3>
+                        <p class="max-w-md mb-6 text-sm text-center text-slate-600">
+                            L'historique de ce ticket est vide. Les actions, modifications de statut et commentaires
+                            apparaîtront ici.
+                        </p>
+                        <div class="flex items-center gap-2 text-xs text-slate-500">
+                            <x-heroicon-o-light-bulb class="w-4 h-4" />
+                            <span>Commencez par ajouter un commentaire ci-dessous</span>
+                        </div>
+                    </div>
+                @endforelse
 
-                                    <!-- Content -->
-                                    <div class="flex-1 min-w-0">
-                                        <h4 class="mb-2 text-sm font-semibold md:text-base text-slate-900">
-                                            Ticket fermé ({{ $ticket->status->display_name }})
-                                        </h4>
-                                        <p class="mb-3 text-xs leading-relaxed md:text-sm text-slate-600">
-                                            Ce ticket a été marqué comme fermé. Les commentaires et modifications ne sont
-                                            plus autorisés sur ce ticket.
-                                        </p>
-                                        <p class="text-xs text-slate-500">
-                                            Pour ajouter des informations, veuillez rouvrir le ticket depuis les détails ou
-                                            créer un nouveau ticket.
-                                        </p>
+                {{-- Add Comment Section --}}
+                @if (!$ticket->status->marks_as_closed)
+                    {{-- Add comment form --}}
+                    <div class="p-4 md:p-6 bg-slate-50">
+                        <x-form method="POST" multipart action="{{ route('tickets.notes.store', $ticket) }}">
+                            <x-form-field name="message"
+                                placeholder="Décrivez votre action ou ajoutez un commentaire..." type="textarea"
+                                label="Ajouter un commentaire" />
+                            <x-attachment-input name="attachments" button-label="Joindre des fichiers"
+                                button-icon="heroicon-o-paper-clip" :multiple="true" />
+                            <x-slot name="actions">
+                                <x-button type="submit" label="Publier" icon="heroicon-o-paper-airplane"
+                                    variant="solid" />
+                            </x-slot>
+                        </x-form>
+                    </div>
+                @else
+                    {{-- Ticket Closed Notice --}}
+                    @php
+                        $colors = match ($ticket->status->color) {
+                            'red' => [
+                                'gradient' => 'bg-gradient-to-t from-red-50/90 to-white',
+                                'bg' => 'bg-red-100',
+                                'text' => 'text-red-600',
+                            ],
+                            'orange' => [
+                                'gradient' => 'bg-gradient-to-t from-orange-50/90 to-white',
+                                'bg' => 'bg-orange-100',
+                                'text' => 'text-orange-600',
+                            ],
+                            'amber' => [
+                                'gradient' => 'bg-gradient-to-t from-amber-50/90 to-white',
+                                'bg' => 'bg-amber-100',
+                                'text' => 'text-amber-600',
+                            ],
+                            'yellow' => [
+                                'gradient' => 'bg-gradient-to-t from-yellow-50/90 to-white',
+                                'bg' => 'bg-yellow-100',
+                                'text' => 'text-yellow-600',
+                            ],
+                            'lime' => [
+                                'gradient' => 'bg-gradient-to-t from-lime-50/90 to-white',
+                                'bg' => 'bg-lime-100',
+                                'text' => 'text-lime-600',
+                            ],
+                            'green' => [
+                                'gradient' => 'bg-gradient-to-t from-green-50/90 to-white',
+                                'bg' => 'bg-green-100',
+                                'text' => 'text-green-600',
+                            ],
+                            'emerald' => [
+                                'gradient' => 'bg-gradient-to-t from-emerald-50/90 to-white',
+                                'bg' => 'bg-emerald-100',
+                                'text' => 'text-emerald-600',
+                            ],
+                            'teal' => [
+                                'gradient' => 'bg-gradient-to-t from-teal-50/90 to-white',
+                                'bg' => 'bg-teal-100',
+                                'text' => 'text-teal-600',
+                            ],
+                            'cyan' => [
+                                'gradient' => 'bg-gradient-to-t from-cyan-50/90 to-white',
+                                'bg' => 'bg-cyan-100',
+                                'text' => 'text-cyan-600',
+                            ],
+                            'sky' => [
+                                'gradient' => 'bg-gradient-to-t from-sky-50/90 to-white',
+                                'bg' => 'bg-sky-100',
+                                'text' => 'text-sky-600',
+                            ],
+                            'blue' => [
+                                'gradient' => 'bg-gradient-to-t from-blue-50/90 to-white',
+                                'bg' => 'bg-blue-100',
+                                'text' => 'text-blue-600',
+                            ],
+                            'indigo' => [
+                                'gradient' => 'bg-gradient-to-t from-indigo-50/90 to-white',
+                                'bg' => 'bg-indigo-100',
+                                'text' => 'text-indigo-600',
+                            ],
+                            'violet' => [
+                                'gradient' => 'bg-gradient-to-t from-violet-50/90 to-white',
+                                'bg' => 'bg-violet-100',
+                                'text' => 'text-violet-600',
+                            ],
+                            'purple' => [
+                                'gradient' => 'bg-gradient-to-t from-purple-50/90 to-white',
+                                'bg' => 'bg-purple-100',
+                                'text' => 'text-purple-600',
+                            ],
+                            'fuchsia' => [
+                                'gradient' => 'bg-gradient-to-t from-fuchsia-50/90 to-white',
+                                'bg' => 'bg-fuchsia-100',
+                                'text' => 'text-fuchsia-600',
+                            ],
+                            'pink' => [
+                                'gradient' => 'bg-gradient-to-t from-pink-50/90 to-white',
+                                'bg' => 'bg-pink-100',
+                                'text' => 'text-pink-600',
+                            ],
+                            'rose' => [
+                                'gradient' => 'bg-gradient-to-t from-rose-50/90 to-white',
+                                'bg' => 'bg-rose-100',
+                                'text' => 'text-rose-600',
+                            ],
+                            default => [
+                                'gradient' => 'bg-gradient-to-t from-gray-50/90 to-white',
+                                'bg' => 'bg-gray-100',
+                                'text' => 'text-gray-600',
+                            ],
+                        };
+                    @endphp
+                    <div class="border-t border-slate-300/50 {{ $colors['gradient'] }}">
+                        <div class="p-4 md:p-8">
+                            <div class="flex items-start gap-3 md:gap-5">
+                                <!-- Icon -->
+                                <div class="flex-shrink-0">
+                                    <div
+                                        class="flex items-center justify-center w-10 h-10 rounded-full md:w-12 md:h-12 {{ $colors['bg'] }}">
+                                        <x-heroicon-o-lock-closed class="w-5 h-5 md:w-6 md:h-6 {{ $colors['text'] }}" />
                                     </div>
+                                </div>
+
+                                <!-- Content -->
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="mb-2 text-sm font-semibold md:text-base text-slate-900">
+                                        Ticket fermé ({{ $ticket->status->display_name }})
+                                    </h4>
+                                    <p class="mb-3 text-xs leading-relaxed md:text-sm text-slate-600">
+                                        Ce ticket a été marqué comme fermé. Les commentaires et modifications ne sont
+                                        plus autorisés sur ce ticket.
+                                    </p>
+                                    <p class="text-xs text-slate-500">
+                                        Pour ajouter des informations, veuillez rouvrir le ticket depuis les détails ou
+                                        créer un nouveau ticket.
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                    @endif
-                </div>
+                    </div>
+                @endif
 
             </div>
-            <div class="col-span-1 space-y-4">
+        </div>
 
-                @can('assignUser', $ticket)
-                <!-- Assignés Section -->
+        {{-- Ticket Sidebar --}}
+        <div class="col-span-1 space-y-4">
+
+            @can('assignUser', $ticket)
                 <div class="bg-white border rounded-lg border-slate-300/50">
                     <div class="p-5 border-b rounded-t-lg border-slate-200 bg-gradient-to-r from-slate-50 to-white">
                         <h3 class="flex items-center gap-2 font-semibold text-slate-900">
@@ -236,7 +237,6 @@
                         </h3>
                     </div>
 
-                    <!-- Assigned Users List -->
                     <div class="p-5">
                         <div class="mb-4 space-y-3">
                             @forelse ($ticket->users as $user)
@@ -291,49 +291,49 @@
                                 </x-async-form-field>
                             </div>
                             <button type="submit"
-                                class="inline-flex items-center justify-center flex-shrink-0 text-white transition-colors bg-blue-600 rounded-md w-full sm:w-9 h-9 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                class="inline-flex items-center justify-center flex-shrink-0 w-full text-white transition-colors bg-blue-600 rounded-md sm:w-9 h-9 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                                 <x-heroicon-o-plus class="w-5 h-5" />
                                 <span class="ml-2 sm:hidden">Ajouter</span>
                             </button>
                         </form>
                     </div>
                 </div>
-                @endcan
+            @endcan
 
-                <!-- Informations Client Section -->
-                <div class="bg-white border rounded-lg border-slate-300/50">
-                    <div class="p-5 border-b rounded-t-lg border-slate-200 bg-gradient-to-r from-slate-50 to-white">
-                        <h3 class="flex items-center gap-2 font-semibold text-slate-900">
-                            <x-heroicon-o-user-circle class="w-5 h-5 text-slate-600" />
-                            Informations client
-                        </h3>
-                    </div>
-
-                    <div class="p-5">
-                        <!-- Customer Info -->
-                        <div class="mb-4 space-y-3">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-full bg-slate-100">
-                                    <x-heroicon-o-user class="w-4 h-4 text-slate-600" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-blue-600">{{ $ticket->customer->full_name }}</p>
-                                    <p class="text-xs text-slate-600">{{ $ticket->customer->email }}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- View Profile Button -->
-                        <a href="{{ route('customers.show', $ticket->customer) }}"
-                            class="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm transition-colors border rounded-md text-slate-600 border-slate-300 hover:bg-slate-50">
-                            <x-heroicon-o-eye class="w-4 h-4" />
-                            Voir le profil
-                        </a>
-                    </div>
+            <!-- Informations Client Section -->
+            <div class="bg-white border rounded-lg border-slate-300/50">
+                <div class="p-5 border-b rounded-t-lg border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+                    <h3 class="flex items-center gap-2 font-semibold text-slate-900">
+                        <x-heroicon-o-user-circle class="w-5 h-5 text-slate-600" />
+                        Informations client
+                    </h3>
                 </div>
 
-                @can('updateStatus', $ticket)
+                <div class="p-5">
+                    <!-- Customer Info -->
+                    <div class="mb-4 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-full bg-slate-100">
+                                <x-heroicon-o-user class="w-4 h-4 text-slate-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-blue-600">{{ $ticket->customer->full_name }}</p>
+                                <p class="text-xs text-slate-600">{{ $ticket->customer->email }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- View Profile Button -->
+                    <a href="{{ route('customers.show', $ticket->customer) }}"
+                        class="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm transition-colors border rounded-md text-slate-600 border-slate-300 hover:bg-slate-50">
+                        <x-heroicon-o-eye class="w-4 h-4" />
+                        Voir le profil
+                    </a>
+                </div>
+            </div>
+
+            @can('updateStatus', $ticket)
                 <!-- Détails du Ticket Section -->
                 <div class="bg-white border rounded-lg border-slate-300/50">
                     <div class="p-5 border-b rounded-t-lg border-slate-200 bg-gradient-to-r from-slate-50 to-white">
@@ -428,9 +428,7 @@
                         </div>
                     </form>
                 </div>
-                @endcan
-            </div>
-
+            @endcan
         </div>
-
-    </x-dashboard-layout>
+    </div>
+</x-dashboard-layout>
