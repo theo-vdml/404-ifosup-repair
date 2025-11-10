@@ -27,7 +27,7 @@
             <x-dashboard.header />
 
             <!-- Page Content -->
-            <main class="flex-1 min-w-0 p-8 overflow-auto bg-gradient-to-br from-slate-50 to-white">
+            <main class="flex-1 min-w-0 p-4 overflow-auto md:p-6 lg:p-8 bg-gradient-to-br from-slate-50 to-white">
                 <div class="min-w-0 mx-auto max-w-7xl">
                     {{ $slot }}
                 </div>
