@@ -3,12 +3,11 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/about', [App\Http\Controllers\AboutController::class, 'index'])->name('about');
-Route::get('/contact', [App\Http\Controllers\ContactController::class, 'index'])->name('contact');
+Route::get('/', [App\Http\Controllers\StaticPageController::class, 'index'])->name('homepage');
+Route::get('/about', [App\Http\Controllers\StaticPageController::class, 'about'])->name('about');
+Route::get('/contact', [App\Http\Controllers\StaticPageController::class, 'contact'])->name('contact');
+Route::get('/terms', [App\Http\Controllers\StaticPageController::class, 'terms'])->name('terms');
+Route::get('/staticform', [App\Http\Controllers\StaticPageController::class, 'staticform'])->name('staticform');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
