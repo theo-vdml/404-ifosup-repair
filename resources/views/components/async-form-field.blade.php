@@ -40,22 +40,31 @@
 
         {{-- Input --}}
         <input type="text" id="{{ $name }}-search" x-model="query" x-on:input.debounce.300ms="search"
-            x-on:blur="validateSelect()" autocomplete="off" {{ $attributes->merge(['placeholder' => 'Rechercher...']) }}
+            x-on:blur="validateSelect()" x-on:keydown.down.prevent="highlightNext()"
+            x-on:keydown.up.prevent="highlightPrev()" x-on:keydown.enter="selectHighlighted"
+            x-on:keydown.escape="closeDropdown()" autocomplete="off"
+            {{ $attributes->merge(['placeholder' => 'Rechercher...']) }} role="combobox"
+            :aria-expanded="results.length > 0 ? 'true' : 'false'"
+            :aria-activedescendant="highlightedIndex >= 0 ? '{{ $name }}-option-' + highlightedIndex : ''"
             aria-invalid="{{ $errors->has($name) ? 'true' : 'false' }}"
             class="{{ $fieldBase }} h-10 {{ $errorClasses }} {{ $withIconPadding }}">
 
         {{-- Spinner --}}
-        <div x-show="searching" class="absolute right-3 top-1/2 -translate-y-1/2">
+        <div x-show="searching" class="absolute -translate-y-1/2 right-3 top-1/2">
             <x-heroicon-o-arrow-path class="w-4 h-4 text-gray-400 animate-spin" />
         </div>
 
         {{-- Dropdown --}}
         <template x-if="results.length > 0">
-            <ul x-show="results.length > 0" x-transition
-                class="absolute z-10 w-full bg-white border border-gray-200 rounded-md shadow-lg mt-1 max-h-60 overflow-auto">
+            <ul x-show="results.length > 0" x-transition x-ref="listbox" role="listbox"
+                class="absolute z-10 w-full mt-1 overflow-auto bg-white border border-gray-200 rounded-md shadow-lg max-h-60">
                 <template x-for="(item, index) in results" :key="item[valueKey]">
-                    <li class="px-3 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-100"
-                        x-on:mousedown.prevent="select(item)" :data-item-index="index" x-init="renderItem($el, item)">
+                    <li class="px-3 py-2 text-sm text-gray-700 transition-colors cursor-pointer"
+                        :class="{ 'bg-gray-100': index === highlightedIndex }" x-on:mousedown.prevent="select(item)"
+                        x-on:mouseenter="highlightedIndex = index" :data-item-index="index"
+                        :id="'{{ $name }}-option-' + index" role="option"
+                        :aria-selected="index === highlightedIndex ? 'true' : 'false'" x-init="renderItem($el, item)"
+                        x-effect="if (index === highlightedIndex) { $el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }">
                         @if ($slot)
                             {{ $slot }}
                         @else
@@ -101,12 +110,14 @@
             selectedId: initialValue || null,
             selectedItem: null,
             searching: false,
+            highlightedIndex: -1,
             labelKey,
             valueKey,
 
             async search() {
                 if (this.query.length < 2) {
                     this.results = [];
+                    this.highlightedIndex = -1;
                     return;
                 }
 
@@ -114,6 +125,7 @@
                 try {
                     const res = await fetch(`${endpoint}?q=${encodeURIComponent(this.query)}`);
                     this.results = await res.json();
+                    this.highlightedIndex = -1; // Don't auto-highlight on search
                     // this.renderItems();
                     console.log(this.results);
                 } catch (err) {
@@ -128,6 +140,31 @@
                 this.selectedItem = item;
                 this.selectedId = item[this.valueKey];
                 this.results = [];
+                this.highlightedIndex = -1;
+            },
+
+            highlightNext() {
+                if (this.results.length === 0) return;
+                this.highlightedIndex = (this.highlightedIndex + 1) % this.results.length;
+            },
+
+            highlightPrev() {
+                if (this.results.length === 0) return;
+                this.highlightedIndex = this.highlightedIndex <= 0 ?
+                    this.results.length - 1 :
+                    this.highlightedIndex - 1;
+            },
+
+            selectHighlighted(event) {
+                if (this.highlightedIndex >= 0 && this.highlightedIndex < this.results.length) {
+                    event.preventDefault();
+                    this.select(this.results[this.highlightedIndex]);
+                }
+            },
+
+            closeDropdown() {
+                this.results = [];
+                this.highlightedIndex = -1;
             },
 
             validateSelect() {
@@ -139,6 +176,7 @@
                     this.selectedId = null;
                 }
                 this.results = [];
+                this.highlightedIndex = -1;
             },
 
             renderItem(el, item) {
