@@ -1,0 +1,30 @@
+header{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+
+@layer components {
+	.btn-green {
+		@apply inline-flex items-center justify-center gap-2 px-4 py-3 rounded-md font-medium text-black shadow-sm;
+		background-color: #a2ff50;
+		transition: transform 150ms cubic-bezier(.2,.9,.2,1), box-shadow 150ms cubic-bezier(.2,.9,.2,1), filter 150ms linear;
+		will-change: transform, box-shadow, filter;
+	}
+
+	.btn-green:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 10px 15px rgba(18, 80, 10, 0.08);
+	}
+
+	.btn-green:active {
+		transform: translateY(-1px) scale(.998);
+		transition-duration: 120ms;
+	}
+
+	.btn-green:focus {
+		outline: none;
+		box-shadow: 0 0 5px 2px rgba(232, 232, 232, 0.6);
+	}
+}
