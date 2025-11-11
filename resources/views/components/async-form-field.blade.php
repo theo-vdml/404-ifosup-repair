@@ -29,7 +29,7 @@
 
     {{-- Label --}}
     @if ($label)
-        <label for="{{ $name }}" class="block text-sm font-semibold text-gray-700">
+        <label for="{{ $name }}-search" class="block text-sm font-semibold text-gray-700">
             {{ $label }}
         </label>
     @endif
@@ -40,12 +40,11 @@
 
         {{-- Input --}}
         <input type="text" id="{{ $name }}-search" x-model="query" x-on:input.debounce.300ms="search"
-            x-on:blur="validateSelect()" x-on:keydown.down.prevent="highlightNext()"
-            x-on:keydown.up.prevent="highlightPrev()" x-on:keydown.enter="selectHighlighted"
-            x-on:keydown.escape="closeDropdown()" autocomplete="off"
+            x-on:keydown.down.prevent="highlightNext()" x-on:keydown.up.prevent="highlightPrev()"
+            x-on:keydown.enter="selectHighlighted" x-on:keydown.escape="closeDropdown()" autocomplete="off"
             {{ $attributes->merge(['placeholder' => 'Rechercher...']) }} role="combobox"
             :aria-expanded="results.length > 0 ? 'true' : 'false'"
-            :aria-activedescendant="highlightedIndex >= 0 ? '{{ $name }}-option-' + highlightedIndex : ''"
+            x-bind:aria-activedescendant="highlightedIndex >= 0 ? '{{ $name }}-option-' + highlightedIndex : undefined"
             aria-invalid="{{ $errors->has($name) ? 'true' : 'false' }}"
             class="{{ $fieldBase }} h-10 {{ $errorClasses }} {{ $withIconPadding }}">
 
@@ -57,6 +56,7 @@
         {{-- Dropdown --}}
         <template x-if="results.length > 0">
             <ul x-show="results.length > 0" x-transition x-ref="listbox" role="listbox"
+                x-on:mouseleave="highlightedIndex = -1"
                 class="absolute z-10 w-full mt-1 overflow-auto bg-white border border-gray-200 rounded-md shadow-lg max-h-60">
                 <template x-for="(item, index) in results" :key="item[valueKey]">
                     <li class="px-3 py-2 text-sm text-gray-700 transition-colors cursor-pointer"
@@ -82,7 +82,7 @@
         @endif
 
         {{-- Hidden field --}}
-        <input type="hidden" name="{{ $name }}" x-model="selectedId">
+        <input type="hidden" name="{{ $name }}" x-model="selectedId" id="{{ $name }}-hidden">
     </div>
 
     {{-- Description --}}
@@ -192,6 +192,7 @@
             async init() {
                 // Pré-remplissage (édition)
                 if (this.selectedId) {
+                    console.log('Préchargement de la valeur initiale', this.selectedId);
                     try {
                         const res = await fetch(`${endpoint}?id=${this.selectedId}`);
                         const item = await res.json();
