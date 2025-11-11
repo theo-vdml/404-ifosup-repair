@@ -64,7 +64,7 @@ class TicketController extends Controller
         $data = $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
         ]);
 
         $data['status_id'] = TicketStatus::open()->id;

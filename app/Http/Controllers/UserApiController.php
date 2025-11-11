@@ -8,6 +8,12 @@ class UserApiController extends Controller
 {
     public function index(Request $request)
     {
+        $id = $request->get('id');
+        if ($id) {
+            $user = \App\Models\User::find($id);
+            return response()->json($user);
+        }
+
         $q = $request->get('q', '');
 
         if (empty($q)) {
