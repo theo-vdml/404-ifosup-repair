@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [App\Http\Controllers\StaticPageController::class, 'index'])->name('homepage');
 Route::get('/about', [App\Http\Controllers\StaticPageController::class, 'about'])->name('about');
 Route::get('/contact', [App\Http\Controllers\StaticPageController::class, 'contact'])->name('contact');
+Route::post('/contact', [App\Http\Controllers\ContactController::class, 'submit'])->name('contact.submit');
 Route::get('/terms', [App\Http\Controllers\StaticPageController::class, 'terms'])->name('terms');
 Route::get('/staticform', [App\Http\Controllers\StaticPageController::class, 'staticform'])->name('staticform');
 
